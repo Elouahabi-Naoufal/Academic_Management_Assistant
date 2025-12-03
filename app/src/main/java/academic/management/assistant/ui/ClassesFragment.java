@@ -48,9 +48,7 @@ public class ClassesFragment extends Fragment {
     }
 
     private void loadSampleData() {
-        classes.add(new ClassItem("Mathematics", "Dr. Smith", "Room 101", "Mon, Wed, Fri 10:00"));
-        classes.add(new ClassItem("Physics", "Dr. Johnson", "Lab 2", "Tue, Thu 14:00"));
-        classes.add(new ClassItem("Chemistry", "Dr. Brown", "Lab 1", "Mon, Wed 16:00"));
+        // No mock data - clean slate
         adapter.notifyDataSetChanged();
     }
 }

@@ -49,15 +49,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void loadSampleData() {
-        long now = System.currentTimeMillis();
-        events.add(new Event("Mathematics", "Room 101", now + 3600000, Event.Type.CLASS));
-        events.add(new Event("Physics Lab", "Lab 2", now + 7200000, Event.Type.CLASS));
-        events.add(new Event("Chemistry Exam", "Hall A", now + 86400000, Event.Type.EXAM));
+        // No mock data - clean slate
         adapter.notifyDataSetChanged();
-        
-        if (!events.isEmpty()) {
-            nextEventText.setText("Next: " + events.get(0).title);
-        }
+        nextEventText.setText("No events scheduled");
     }
 
     private void updateTime() {

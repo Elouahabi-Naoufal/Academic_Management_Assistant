@@ -45,24 +45,11 @@ public class GradesFragment extends Fragment {
     }
 
     private void loadSampleData() {
-        grades.add(new GradeItem("Mathematics", "Midterm", 85, 100));
-        grades.add(new GradeItem("Physics", "Quiz 1", 92, 100));
-        grades.add(new GradeItem("Chemistry", "Lab Report", 78, 100));
-        grades.add(new GradeItem("Mathematics", "Quiz 2", 88, 100));
+        // No mock data - clean slate
         adapter.notifyDataSetChanged();
     }
 
     private void calculateGPA() {
-        if (grades.isEmpty()) {
-            gpaText.setText("GPA: --");
-            return;
-        }
-        
-        double total = 0;
-        for (GradeItem grade : grades) {
-            total += (grade.score / grade.maxScore) * 4.0;
-        }
-        double gpa = total / grades.size();
-        gpaText.setText(String.format("GPA: %.2f", gpa));
+        gpaText.setText("GPA: --");
     }
 }

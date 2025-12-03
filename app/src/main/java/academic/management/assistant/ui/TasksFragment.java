@@ -48,10 +48,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void loadSampleData() {
-        long now = System.currentTimeMillis();
-        tasks.add(new Task("Math Homework", "Complete exercises 1-15", now + 86400000, false));
-        tasks.add(new Task("Physics Lab Report", "Write lab report", now + 172800000, false));
-        tasks.add(new Task("Read Chapter 5", "Chemistry textbook", now + 259200000, true));
+        // No mock data - clean slate
         adapter.notifyDataSetChanged();
     }
 }
