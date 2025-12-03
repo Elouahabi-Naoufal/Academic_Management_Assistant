@@ -124,10 +124,17 @@ public class GradesFragment extends Fragment {
                 if (!type.isEmpty() && maxScore > 0) {
                     GradeItem newGrade = new GradeItem(subject, type, score, maxScore);
                     newGrade.classId = classes.get(classSpinner.getSelectedItemPosition()).id;
+                    newGrade.dateReceived = System.currentTimeMillis();
+                    newGrade.dateEntered = System.currentTimeMillis();
+                    newGrade.weight = 1.0;
+                    newGrade.gradeType = GradeItem.GradeType.ASSIGNMENT;
+                    
                     repository.insertGrade(newGrade);
                     loadData();
                     calculateGPA();
-                    Toast.makeText(getContext(), "Grade added!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "✅ Grade added successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "❌ Please fill all required fields", Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
                 Toast.makeText(getContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();

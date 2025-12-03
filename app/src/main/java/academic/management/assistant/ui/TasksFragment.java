@@ -111,9 +111,14 @@ public class TasksFragment extends Fragment {
             if (!title.isEmpty()) {
                 Task newTask = new Task(title, desc, selectedDate[0], false);
                 newTask.priority = (Task.Priority) prioritySpinner.getSelectedItem();
+                newTask.status = Task.Status.TODO;
+                newTask.createdDate = System.currentTimeMillis();
+                
                 repository.insertTask(newTask);
                 loadData();
-                Toast.makeText(getContext(), "Task added!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "✅ Task added successfully!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "❌ Please enter task title", Toast.LENGTH_SHORT).show();
             }
         });
         

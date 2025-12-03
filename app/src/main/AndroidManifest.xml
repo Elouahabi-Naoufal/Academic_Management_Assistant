@@ -27,6 +27,11 @@
             android:name=".ui.ClassDetailsActivity"
             android:exported="false"
             android:theme="@style/Theme.Academic_Management_Assistant" />
+            
+        <activity
+            android:name=".ui.AddClassActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Academic_Management_Assistant" />
     </application>
 
 </manifest>
