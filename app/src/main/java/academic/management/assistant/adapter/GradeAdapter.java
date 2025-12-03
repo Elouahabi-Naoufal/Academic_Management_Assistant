@@ -13,10 +13,16 @@ import academic.management.assistant.data.GradeItem;
 
 public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.ViewHolder> {
     
-    private List<GradeItem> grades;
+    public interface OnGradeClickListener {
+        void onGradeClick(GradeItem grade, int position);
+    }
     
-    public GradeAdapter(List<GradeItem> grades) {
+    private List<GradeItem> grades;
+    private OnGradeClickListener listener;
+    
+    public GradeAdapter(List<GradeItem> grades, OnGradeClickListener listener) {
         this.grades = grades;
+        this.listener = listener;
     }
 
     @NonNull
@@ -34,6 +40,12 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.ViewHolder> 
         holder.typeText.setText(grade.type);
         holder.scoreText.setText(String.format(Locale.getDefault(), "%.0f/%.0f", grade.score, grade.maxScore));
         holder.percentageText.setText(String.format(Locale.getDefault(), "%.1f%%", grade.getPercentage()));
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onGradeClick(grade, position);
+            }
+        });
     }
 
     @Override

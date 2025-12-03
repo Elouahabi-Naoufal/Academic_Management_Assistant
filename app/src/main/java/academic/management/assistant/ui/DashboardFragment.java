@@ -18,6 +18,7 @@ import java.util.Locale;
 import academic.management.assistant.R;
 import academic.management.assistant.data.Event;
 import academic.management.assistant.adapter.EventAdapter;
+import academic.management.assistant.database.Repository;
 
 public class DashboardFragment extends Fragment {
     
@@ -25,6 +26,7 @@ public class DashboardFragment extends Fragment {
     private RecyclerView eventsRecycler;
     private EventAdapter adapter;
     private List<Event> events = new ArrayList<>();
+    private Repository repository;
 
     @Nullable
     @Override
@@ -35,8 +37,9 @@ public class DashboardFragment extends Fragment {
         nextEventText = view.findViewById(R.id.nextEventText);
         eventsRecycler = view.findViewById(R.id.eventsRecycler);
         
+        repository = new Repository(getContext());
         setupRecyclerView();
-        loadSampleData();
+        loadData();
         updateTime();
         
         return view;
@@ -48,10 +51,23 @@ public class DashboardFragment extends Fragment {
         eventsRecycler.setAdapter(adapter);
     }
 
-    private void loadSampleData() {
-        // No mock data - clean slate
+    private void loadData() {
+        events.clear();
+        events.addAll(repository.getTodayEvents());
         adapter.notifyDataSetChanged();
-        nextEventText.setText("No events scheduled");
+        
+        Event nextEvent = repository.getNextEvent();
+        if (nextEvent != null) {
+            nextEventText.setText(nextEvent.title);
+        } else {
+            nextEventText.setText("No events scheduled");
+        }
+    }
+    
+    public void refreshData() {
+        if (repository != null) {
+            loadData();
+        }
     }
 
     private void updateTime() {

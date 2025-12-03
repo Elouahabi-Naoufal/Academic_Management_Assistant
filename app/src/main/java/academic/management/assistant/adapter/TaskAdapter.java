@@ -16,10 +16,22 @@ import academic.management.assistant.data.Task;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     
-    private List<Task> tasks;
+    public interface OnTaskClickListener {
+        void onTaskClick(Task task, int position);
+    }
     
-    public TaskAdapter(List<Task> tasks) {
+    public interface OnTaskCheckListener {
+        void onTaskCheck(Task task);
+    }
+    
+    private List<Task> tasks;
+    private OnTaskClickListener clickListener;
+    private OnTaskCheckListener checkListener;
+    
+    public TaskAdapter(List<Task> tasks, OnTaskClickListener clickListener, OnTaskCheckListener checkListener) {
         this.tasks = tasks;
+        this.clickListener = clickListener;
+        this.checkListener = checkListener;
     }
 
     @NonNull
@@ -41,7 +53,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.dueDateText.setText("Due: " + fmt.format(new Date(task.dueDate)));
         
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            task.completed = isChecked;
+            if (checkListener != null) {
+                checkListener.onTaskCheck(task);
+            }
+        });
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onTaskClick(task, position);
+            }
         });
     }
 

@@ -12,10 +12,16 @@ import academic.management.assistant.data.ClassItem;
 
 public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> {
     
-    private List<ClassItem> classes;
+    public interface OnClassClickListener {
+        void onClassClick(ClassItem classItem, int position);
+    }
     
-    public ClassAdapter(List<ClassItem> classes) {
+    private List<ClassItem> classes;
+    private OnClassClickListener listener;
+    
+    public ClassAdapter(List<ClassItem> classes, OnClassClickListener listener) {
         this.classes = classes;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,6 +39,12 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
         holder.teacherText.setText(classItem.teacher);
         holder.roomText.setText(classItem.room);
         holder.scheduleText.setText(classItem.schedule);
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onClassClick(classItem, position);
+            }
+        });
     }
 
     @Override
