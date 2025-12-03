@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#90CAF9</color>
+    <color name="primaryVariant">#64B5F6</color>
+    <color name="background">#121212</color>
+    <color name="surface">#1E1E1E</color>
+    <color name="onBackground">#FFFFFFFF</color>
+    <color name="onSurface">#FFFFFFFF</color>
+    <color name="textPrimary">#FFFFFFFF</color>
+    <color name="textSecondary">#B3FFFFFF</color>
+    <color name="accent">#FFC107</color>
+    <color name="urgent">#EF5350</color>
+
+    <!-- Dark-specific aliases -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_onBackground">#FFFFFFFF</color>
+    <color name="dark_onSurface">#FFFFFFFF</color>
+</resources>
