@@ -16,6 +16,7 @@ import academic.management.assistant.R;
 import academic.management.assistant.data.ClassItem;
 import academic.management.assistant.adapter.ClassAdapter;
 import academic.management.assistant.database.Repository;
+import academic.management.assistant.ui.ClassDetailsActivity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.widget.EditText;
@@ -69,6 +70,15 @@ public class ClassesFragment extends Fragment {
         });
         
         return view;
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh data when returning from details activity
+        if (repository != null) {
+            loadData();
+        }
     }
 
     private void setupRecyclerView() {
@@ -183,19 +193,10 @@ public class ClassesFragment extends Fragment {
     }
     
     private void showClassOptions(ClassItem classItem, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(classItem.name);
-        
-        String[] options = {"Edit", "Delete", "View Details"};
-        builder.setItems(options, (dialog, which) -> {
-            switch (which) {
-                case 0: showEditClassDialog(classItem); break;
-                case 1: deleteClass(classItem); break;
-                case 2: showClassDetails(classItem); break;
-            }
-        });
-        
-        builder.show();
+        // Launch details activity directly
+        android.content.Intent intent = new android.content.Intent(getContext(), ClassDetailsActivity.class);
+        intent.putExtra("CLASS_ID", classItem.id);
+        startActivity(intent);
     }
     
     private void showEditClassDialog(ClassItem classItem) {
