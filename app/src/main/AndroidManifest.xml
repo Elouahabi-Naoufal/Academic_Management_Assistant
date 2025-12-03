@@ -32,6 +32,16 @@
             android:name=".ui.AddClassActivity"
             android:exported="false"
             android:theme="@style/Theme.Academic_Management_Assistant" />
+            
+        <activity
+            android:name=".ui.AddTaskActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Academic_Management_Assistant" />
+            
+        <activity
+            android:name=".ui.TaskDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Academic_Management_Assistant" />
     </application>
 
 </manifest>
