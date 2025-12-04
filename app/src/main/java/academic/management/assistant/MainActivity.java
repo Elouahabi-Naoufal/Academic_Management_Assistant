@@ -1,6 +1,5 @@
 package academic.management.assistant;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +7,13 @@ import android.widget.LinearLayout;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.content.res.ColorStateList;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.google.android.material.card.MaterialCardView;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private LinearLayout btnDashboard, btnClasses, btnModules, btnTeachers, btnSettings;
     private int accentColor;
     
@@ -22,17 +22,17 @@ public class MainActivity extends Activity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         ThemeDao themeDao = new ThemeDao(dbHelper);
         
-        // Apply theme before setContentView
-        AppCompatDelegate.setDefaultNightMode(
-            themeDao.isDarkTheme() ? 
+        // Force theme mode to override system settings
+        int nightMode = themeDao.isDarkTheme() ? 
             AppCompatDelegate.MODE_NIGHT_YES : 
-            AppCompatDelegate.MODE_NIGHT_NO
-        );
+            AppCompatDelegate.MODE_NIGHT_NO;
+        getDelegate().setLocalNightMode(nightMode);
+        
+        super.onCreate(savedInstanceState);
         
         accentColor = Color.parseColor(themeDao.getAccentColor());
         getTheme().applyStyle(getAccentStyle(themeDao.getAccentColor()), true);
         
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
         btnDashboard = findViewById(R.id.btnDashboard);
