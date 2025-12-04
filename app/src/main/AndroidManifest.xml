@@ -19,6 +19,9 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".AddClassActivity"
+            android:exported="false" />
 
     </application>
 
