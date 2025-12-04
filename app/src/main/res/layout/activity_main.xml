@@ -11,6 +11,7 @@
         android:layout_weight="1" />
 
     <LinearLayout
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:orientation="horizontal"
@@ -46,6 +47,14 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Teachers"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="⚙"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>
