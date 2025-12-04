@@ -31,6 +31,8 @@ public class DashboardFragment extends Fragment {
         countdown = view.findViewById(R.id.countdown);
         nextClassDetails = view.findViewById(R.id.nextClassDetails);
         
+        // Card is now a MaterialCardView, no need to set background color
+        
         findNextClass();
         startCountdown();
         

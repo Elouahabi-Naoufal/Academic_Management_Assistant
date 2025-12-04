@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.Button;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 import academic.management.assistant.adapter.ClassAdapter;
 import academic.management.assistant.database.ClassDao;
@@ -33,7 +33,7 @@ public class ClassesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.classesRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         
-        Button fab = view.findViewById(R.id.fabAddClass);
+        FloatingActionButton fab = view.findViewById(R.id.fabAddClass);
         fab.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddClassActivity.class);
             startActivity(intent);

@@ -3,13 +3,16 @@ package academic.management.assistant;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.graphics.Color;
+import com.google.android.material.card.MaterialCardView;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
 
 public class MainActivity extends Activity {
+    private LinearLayout btnDashboard, btnClasses, btnModules, btnTeachers, btnSettings;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,28 +22,48 @@ public class MainActivity extends Activity {
         
         setContentView(R.layout.activity_main);
         
-        // Apply theme
-        LinearLayout navBar = findViewById(R.id.navBar);
-        String accentColor = themeDao.getAccentColor();
-        navBar.setBackgroundColor(Color.parseColor(accentColor));
-        
         if (themeDao.isDarkTheme()) {
             findViewById(R.id.container).setBackgroundColor(Color.parseColor("#121212"));
         }
         
-        Button btnDashboard = findViewById(R.id.btnDashboard);
-        Button btnClasses = findViewById(R.id.btnClasses);
-        Button btnModules = findViewById(R.id.btnModules);
-        Button btnTeachers = findViewById(R.id.btnTeachers);
-        Button btnSettings = findViewById(R.id.btnSettings);
+        btnDashboard = findViewById(R.id.btnDashboard);
+        btnClasses = findViewById(R.id.btnClasses);
+        btnModules = findViewById(R.id.btnModules);
+        btnTeachers = findViewById(R.id.btnTeachers);
+        btnSettings = findViewById(R.id.btnSettings);
         
-        btnDashboard.setOnClickListener(v -> showFragment(new DashboardFragment()));
-        btnClasses.setOnClickListener(v -> showFragment(new ClassesFragment()));
-        btnModules.setOnClickListener(v -> showFragment(new ModulesFragment()));
-        btnTeachers.setOnClickListener(v -> showFragment(new TeachersFragment()));
-        btnSettings.setOnClickListener(v -> showFragment(new SettingsFragment()));
+        btnDashboard.setOnClickListener(v -> {
+            selectTab(btnDashboard);
+            showFragment(new DashboardFragment());
+        });
+        btnClasses.setOnClickListener(v -> {
+            selectTab(btnClasses);
+            showFragment(new ClassesFragment());
+        });
+        btnModules.setOnClickListener(v -> {
+            selectTab(btnModules);
+            showFragment(new ModulesFragment());
+        });
+        btnTeachers.setOnClickListener(v -> {
+            selectTab(btnTeachers);
+            showFragment(new TeachersFragment());
+        });
+        btnSettings.setOnClickListener(v -> {
+            selectTab(btnSettings);
+            showFragment(new SettingsFragment());
+        });
         
+        selectTab(btnDashboard);
         showFragment(new DashboardFragment());
+    }
+    
+    private void selectTab(LinearLayout selected) {
+        btnDashboard.setSelected(false);
+        btnClasses.setSelected(false);
+        btnModules.setSelected(false);
+        btnTeachers.setSelected(false);
+        btnSettings.setSelected(false);
+        selected.setSelected(true);
     }
     
     private void showFragment(android.app.Fragment fragment) {

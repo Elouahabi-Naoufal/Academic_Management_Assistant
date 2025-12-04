@@ -6,14 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Switch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
 
 public class SettingsFragment extends Fragment {
     
     private ThemeDao themeDao;
-    private Switch darkModeSwitch;
+    private SwitchMaterial darkModeSwitch;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
