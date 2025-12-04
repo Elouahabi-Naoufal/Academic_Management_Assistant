@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
@@ -29,13 +31,21 @@ public class SettingsFragment extends Fragment {
             getActivity().recreate();
         });
         
-        view.findViewById(R.id.colorPurple).setOnClickListener(v -> setAccentColor("#6200EE"));
-        view.findViewById(R.id.colorBlue).setOnClickListener(v -> setAccentColor("#2196F3"));
-        view.findViewById(R.id.colorGreen).setOnClickListener(v -> setAccentColor("#4CAF50"));
-        view.findViewById(R.id.colorRed).setOnClickListener(v -> setAccentColor("#F44336"));
-        view.findViewById(R.id.colorOrange).setOnClickListener(v -> setAccentColor("#FF9800"));
+        setupColorButton(view.findViewById(R.id.colorPurple), "#6200EE");
+        setupColorButton(view.findViewById(R.id.colorBlue), "#2196F3");
+        setupColorButton(view.findViewById(R.id.colorGreen), "#4CAF50");
+        setupColorButton(view.findViewById(R.id.colorRed), "#F44336");
+        setupColorButton(view.findViewById(R.id.colorOrange), "#FF9800");
         
         return view;
+    }
+    
+    private void setupColorButton(View button, String color) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.OVAL);
+        drawable.setColor(Color.parseColor(color));
+        button.setBackground(drawable);
+        button.setOnClickListener(v -> setAccentColor(color));
     }
     
     private void setAccentColor(String color) {

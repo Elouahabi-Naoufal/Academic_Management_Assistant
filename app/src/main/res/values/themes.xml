@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Academic_Management_Assistant" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimary">?attr/accentColor</item>
         <item name="colorSecondary">@color/secondary</item>
         <item name="android:colorBackground">@color/background_light</item>
         <item name="colorSurface">@color/surface_light</item>
@@ -12,5 +12,26 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@color/surface_light</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="accentColor">@color/primary</item>
+    </style>
+
+    <style name="AccentPurple">
+        <item name="accentColor">#6200EE</item>
+    </style>
+    
+    <style name="AccentBlue">
+        <item name="accentColor">#2196F3</item>
+    </style>
+    
+    <style name="AccentGreen">
+        <item name="accentColor">#4CAF50</item>
+    </style>
+    
+    <style name="AccentRed">
+        <item name="accentColor">#F44336</item>
+    </style>
+    
+    <style name="AccentOrange">
+        <item name="accentColor">#FF9800</item>
     </style>
 </resources>
