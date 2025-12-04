@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Modern vibrant colors for students -->
-    <color name="primary">#6C63FF</color>
-    <color name="primaryVariant">#5A52D5</color>
-    <color name="secondary">#FF6B9D</color>
-    <color name="accent">#FFD93D</color>
-    <color name="success">#6BCF7F</color>
-    <color name="warning">#FFB74D</color>
-    <color name="error">#F87171</color>
-    
-    <color name="background">#F8FAFC</color>
-    <color name="surface">#FFFFFF</color>
-    <color name="onBackground">#1E293B</color>
-    <color name="onSurface">#1E293B</color>
-    <color name="textPrimary">#1E293B</color>
-    <color name="textSecondary">#64748B</color>
-    <color name="onPrimary">#FFFFFF</color>
-    
-    <!-- Card colors -->
-    <color name="card_math">#E8F4FD</color>
-    <color name="card_science">#F0F9FF</color>
-    <color name="card_language">#FEF3E2</color>
-    <color name="card_history">#F3E8FF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
 </resources>
