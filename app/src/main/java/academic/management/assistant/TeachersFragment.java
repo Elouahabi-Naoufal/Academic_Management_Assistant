@@ -74,14 +74,28 @@ public class TeachersFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Edit Teacher");
         
-        EditText input = new EditText(getActivity());
-        input.setText(teacher.fullName);
-        builder.setView(input);
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(getActivity());
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 10);
+        
+        EditText nameInput = new EditText(getActivity());
+        nameInput.setText(teacher.fullName);
+        nameInput.setHint("Teacher name");
+        layout.addView(nameInput);
+        
+        EditText imageInput = new EditText(getActivity());
+        imageInput.setText(teacher.imagePath != null ? teacher.imagePath : "");
+        imageInput.setHint("Image path (optional)");
+        layout.addView(imageInput);
+        
+        builder.setView(layout);
         
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = input.getText().toString().trim();
+            String name = nameInput.getText().toString().trim();
+            String imagePath = imageInput.getText().toString().trim();
             if (!name.isEmpty()) {
                 teacher.fullName = name;
+                teacher.imagePath = imagePath.isEmpty() ? null : imagePath;
                 teacherDao.updateTeacher(teacher);
                 loadTeachers();
                 Toast.makeText(getActivity(), "Teacher updated!", Toast.LENGTH_SHORT).show();

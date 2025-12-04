@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.widget.CheckBox;
 import academic.management.assistant.database.ClassDao;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ModuleDao;
@@ -20,6 +21,7 @@ public class EditClassActivity extends Activity {
     
     private EditText titleEdit, locationEdit, startTimeEdit, endTimeEdit;
     private Spinner weekdaySpinner, moduleSpinner, teacherSpinner;
+    private CheckBox archivedCheckbox;
     private ClassDao classDao;
     private ClassItem classItem;
     private List<academic.management.assistant.model.Module> modules;
@@ -50,6 +52,7 @@ public class EditClassActivity extends Activity {
         weekdaySpinner = findViewById(R.id.weekdaySpinner);
         moduleSpinner = findViewById(R.id.moduleSpinner);
         teacherSpinner = findViewById(R.id.teacherSpinner);
+        archivedCheckbox = findViewById(R.id.archivedCheckbox);
         
         // Load modules
         modules = moduleDao.getAllModules();
@@ -103,6 +106,7 @@ public class EditClassActivity extends Activity {
         // Calendar to spinner: Sunday=1->6, Monday=2->0, Tuesday=3->1, etc.
         int spinnerPos = classItem.weekday == 1 ? 6 : classItem.weekday - 2;
         weekdaySpinner.setSelection(spinnerPos);
+        archivedCheckbox.setChecked(classItem.isArchived);
     }
     
     private void saveClass() {
@@ -128,6 +132,7 @@ public class EditClassActivity extends Activity {
         }
         classItem.startTime = startTime;
         classItem.endTime = endTime;
+        classItem.isArchived = archivedCheckbox.isChecked();
         
         classDao.updateClass(classItem);
         Toast.makeText(this, "Class updated!", Toast.LENGTH_SHORT).show();
