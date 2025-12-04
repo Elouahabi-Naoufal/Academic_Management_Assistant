@@ -22,6 +22,10 @@
         <activity
             android:name=".AddClassActivity"
             android:exported="false" />
+            
+        <activity
+            android:name=".EditClassActivity"
+            android:exported="false" />
 
     </application>
 

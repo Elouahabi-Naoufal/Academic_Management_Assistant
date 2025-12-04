@@ -49,12 +49,14 @@ public class ClassesFragment extends Fragment {
         adapter = new ClassAdapter(classes, new ClassAdapter.OnClassClickListener() {
             @Override
             public void onClassClick(ClassItem classItem) {
-                // TODO: Open class details
+                Intent intent = new Intent(getActivity(), EditClassActivity.class);
+                intent.putExtra("CLASS_ID", classItem.id);
+                startActivity(intent);
             }
             
             @Override
             public void onClassLongClick(ClassItem classItem) {
-                showDeleteDialog(classItem);
+                // Long click does nothing now, use edit screen to delete
             }
         });
         recyclerView.setAdapter(adapter);

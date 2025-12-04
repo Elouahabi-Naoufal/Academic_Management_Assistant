@@ -63,6 +63,53 @@ public class ClassDao {
         return db.insert("class", null, values);
     }
     
+    public ClassItem getClassById(int id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT c.id, c.title, c.module_id, m.name as module_name, " +
+                      "c.teacher_id, t.full_name as teacher_name, c.location, " +
+                      "c.weekday, c.start_time, c.end_time, c.is_archived " +
+                      "FROM class c " +
+                      "LEFT JOIN module m ON c.module_id = m.id " +
+                      "LEFT JOIN teacher t ON c.teacher_id = t.id " +
+                      "WHERE c.id = ?";
+        
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        
+        ClassItem item = null;
+        if (cursor.moveToFirst()) {
+            item = new ClassItem();
+            item.id = cursor.getInt(0);
+            item.title = cursor.getString(1);
+            item.moduleId = cursor.getInt(2);
+            item.moduleName = cursor.getString(3);
+            item.teacherId = cursor.getInt(4);
+            item.teacherName = cursor.getString(5);
+            item.location = cursor.getString(6);
+            item.weekday = cursor.getInt(7);
+            item.startTime = cursor.getString(8);
+            item.endTime = cursor.getString(9);
+            item.isArchived = cursor.getInt(10) == 1;
+        }
+        
+        cursor.close();
+        return item;
+    }
+    
+    public void updateClass(ClassItem classItem) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("title", classItem.title);
+        values.put("module_id", classItem.moduleId);
+        values.put("teacher_id", classItem.teacherId);
+        values.put("location", classItem.location);
+        values.put("weekday", classItem.weekday);
+        values.put("start_time", classItem.startTime);
+        values.put("end_time", classItem.endTime);
+        values.put("is_archived", classItem.isArchived ? 1 : 0);
+        db.update("class", values, "id = ?", new String[]{String.valueOf(classItem.id)});
+    }
+    
     public void deleteClass(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("class", "id = ?", new String[]{String.valueOf(id)});

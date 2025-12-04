@@ -1,6 +1,7 @@
 package academic.management.assistant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,19 +12,28 @@ import academic.management.assistant.database.ClassDao;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.model.ClassItem;
 
-public class AddClassActivity extends Activity {
+public class EditClassActivity extends Activity {
     
     private EditText titleEdit, locationEdit, startTimeEdit, endTimeEdit;
     private Spinner weekdaySpinner;
     private ClassDao classDao;
+    private ClassItem classItem;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_class);
+        setContentView(R.layout.activity_edit_class);
         
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         classDao = new ClassDao(dbHelper);
+        
+        int classId = getIntent().getIntExtra("CLASS_ID", -1);
+        classItem = classDao.getClassById(classId);
+        
+        if (classItem == null) {
+            finish();
+            return;
+        }
         
         titleEdit = findViewById(R.id.titleEdit);
         locationEdit = findViewById(R.id.locationEdit);
@@ -36,11 +46,26 @@ public class AddClassActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         weekdaySpinner.setAdapter(adapter);
         
+        loadClassData();
+        
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> saveClass());
         
+        Button deleteBtn = findViewById(R.id.deleteBtn);
+        deleteBtn.setOnClickListener(v -> showDeleteDialog());
+        
         Button cancelBtn = findViewById(R.id.cancelBtn);
         cancelBtn.setOnClickListener(v -> finish());
+    }
+    
+    private void loadClassData() {
+        titleEdit.setText(classItem.title);
+        locationEdit.setText(classItem.location);
+        startTimeEdit.setText(classItem.startTime);
+        endTimeEdit.setText(classItem.endTime);
+        // Calendar to spinner: Sunday=1->6, Monday=2->0, Tuesday=3->1, etc.
+        int spinnerPos = classItem.weekday == 1 ? 6 : classItem.weekday - 2;
+        weekdaySpinner.setSelection(spinnerPos);
     }
     
     private void saveClass() {
@@ -54,25 +79,32 @@ public class AddClassActivity extends Activity {
             return;
         }
         
-        ClassItem classItem = new ClassItem();
         classItem.title = title;
-        classItem.moduleId = 1; // TODO: Select module
-        classItem.teacherId = 1; // TODO: Select teacher
         classItem.location = location;
-        // Spinner: Monday=0, Tuesday=1, Wednesday=2, Thursday=3, Friday=4, Saturday=5, Sunday=6
-        // Calendar: Sunday=1, Monday=2, Tuesday=3, Wednesday=4, Thursday=5, Friday=6, Saturday=7
         int spinnerPos = weekdaySpinner.getSelectedItemPosition();
         if (spinnerPos == 6) {
             classItem.weekday = 1; // Sunday
         } else {
-            classItem.weekday = spinnerPos + 2; // Monday=2, Tuesday=3, etc.
+            classItem.weekday = spinnerPos + 2;
         }
         classItem.startTime = startTime;
         classItem.endTime = endTime;
-        classItem.isArchived = false;
         
-        classDao.insertClass(classItem);
-        Toast.makeText(this, "Class added!", Toast.LENGTH_SHORT).show();
+        classDao.updateClass(classItem);
+        Toast.makeText(this, "Class updated!", Toast.LENGTH_SHORT).show();
         finish();
+    }
+    
+    private void showDeleteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Class")
+                .setMessage("Delete " + classItem.title + "?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    classDao.deleteClass(classItem.id);
+                    Toast.makeText(this, "Class deleted!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }
