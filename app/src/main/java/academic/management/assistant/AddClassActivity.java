@@ -9,13 +9,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import academic.management.assistant.database.ClassDao;
 import academic.management.assistant.database.DatabaseHelper;
+import academic.management.assistant.database.ModuleDao;
+import academic.management.assistant.database.TeacherDao;
 import academic.management.assistant.model.ClassItem;
+import java.util.List;
+import java.util.ArrayList;
 
 public class AddClassActivity extends Activity {
     
     private EditText titleEdit, locationEdit, startTimeEdit, endTimeEdit;
-    private Spinner weekdaySpinner;
+    private Spinner weekdaySpinner, moduleSpinner, teacherSpinner;
     private ClassDao classDao;
+    private List<academic.management.assistant.model.Module> modules;
+    private List<academic.management.assistant.model.Teacher> teachers;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +30,42 @@ public class AddClassActivity extends Activity {
         
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         classDao = new ClassDao(dbHelper);
+        ModuleDao moduleDao = new ModuleDao(dbHelper);
+        TeacherDao teacherDao = new TeacherDao(dbHelper);
         
         titleEdit = findViewById(R.id.titleEdit);
         locationEdit = findViewById(R.id.locationEdit);
         startTimeEdit = findViewById(R.id.startTimeEdit);
         endTimeEdit = findViewById(R.id.endTimeEdit);
         weekdaySpinner = findViewById(R.id.weekdaySpinner);
+        moduleSpinner = findViewById(R.id.moduleSpinner);
+        teacherSpinner = findViewById(R.id.teacherSpinner);
         
+        // Load modules
+        modules = moduleDao.getAllModules();
+        List<String> moduleNames = new ArrayList<>();
+        for (academic.management.assistant.model.Module m : modules) {
+            moduleNames.add(m.name);
+        }
+        ArrayAdapter<String> moduleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, moduleNames);
+        moduleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        moduleSpinner.setAdapter(moduleAdapter);
+        
+        // Load teachers
+        teachers = teacherDao.getAllTeachers();
+        List<String> teacherNames = new ArrayList<>();
+        for (academic.management.assistant.model.Teacher t : teachers) {
+            teacherNames.add(t.fullName);
+        }
+        ArrayAdapter<String> teacherAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teacherNames);
+        teacherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        teacherSpinner.setAdapter(teacherAdapter);
+        
+        // Load weekdays
         String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, weekdays);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        weekdaySpinner.setAdapter(adapter);
+        ArrayAdapter<String> weekdayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, weekdays);
+        weekdayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        weekdaySpinner.setAdapter(weekdayAdapter);
         
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> saveClass());
@@ -54,10 +85,15 @@ public class AddClassActivity extends Activity {
             return;
         }
         
+        if (modules.isEmpty() || teachers.isEmpty()) {
+            Toast.makeText(this, "Please add modules and teachers first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         ClassItem classItem = new ClassItem();
         classItem.title = title;
-        classItem.moduleId = 1; // TODO: Select module
-        classItem.teacherId = 1; // TODO: Select teacher
+        classItem.moduleId = modules.get(moduleSpinner.getSelectedItemPosition()).id;
+        classItem.teacherId = teachers.get(teacherSpinner.getSelectedItemPosition()).id;
         classItem.location = location;
         // Spinner: Monday=0, Tuesday=1, Wednesday=2, Thursday=3, Friday=4, Saturday=5, Sunday=6
         // Calendar: Sunday=1, Monday=2, Tuesday=3, Wednesday=4, Thursday=5, Friday=6, Saturday=7

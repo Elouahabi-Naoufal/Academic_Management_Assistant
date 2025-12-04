@@ -13,9 +13,13 @@ public class MainActivity extends Activity {
         
         Button btnDashboard = findViewById(R.id.btnDashboard);
         Button btnClasses = findViewById(R.id.btnClasses);
+        Button btnModules = findViewById(R.id.btnModules);
+        Button btnTeachers = findViewById(R.id.btnTeachers);
         
         btnDashboard.setOnClickListener(v -> showFragment(new DashboardFragment()));
         btnClasses.setOnClickListener(v -> showFragment(new ClassesFragment()));
+        btnModules.setOnClickListener(v -> showFragment(new ModulesFragment()));
+        btnTeachers.setOnClickListener(v -> showFragment(new TeachersFragment()));
         
         showFragment(new DashboardFragment());
     }

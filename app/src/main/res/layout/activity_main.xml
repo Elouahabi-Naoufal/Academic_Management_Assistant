@@ -32,6 +32,22 @@
             android:text="Classes"
             android:textColor="#FFFFFF" />
 
+        <Button
+            android:id="@+id/btnModules"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Modules"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnTeachers"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Teachers"
+            android:textColor="#FFFFFF" />
+
     </LinearLayout>
 
 </LinearLayout>

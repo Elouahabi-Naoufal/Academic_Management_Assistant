@@ -27,6 +27,36 @@
         android:hint="Location"
         android:layout_marginBottom="8dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Module"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/moduleSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Teacher"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/teacherSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Day"
+        android:textStyle="bold" />
+
     <Spinner
         android:id="@+id/weekdaySpinner"
         android:layout_width="match_parent"
