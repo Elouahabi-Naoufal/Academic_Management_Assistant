@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import java.util.Calendar;
 import java.util.List;
 import academic.management.assistant.database.ClassDao;
 import academic.management.assistant.database.DatabaseHelper;
+import academic.management.assistant.database.ThemeDao;
 import academic.management.assistant.model.ClassItem;
 
 public class DashboardFragment extends Fragment {
@@ -26,17 +29,35 @@ public class DashboardFragment extends Fragment {
         
         DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
         classDao = new ClassDao(dbHelper);
+        ThemeDao themeDao = new ThemeDao(dbHelper);
         
         nextClassName = view.findViewById(R.id.nextClassName);
         countdown = view.findViewById(R.id.countdown);
         nextClassDetails = view.findViewById(R.id.nextClassDetails);
         
-        // Card is now a MaterialCardView, no need to set background color
+        // Apply accent color to card
+        com.google.android.material.card.MaterialCardView card = view.findViewById(R.id.countdownCard);
+        View cardContent = ((ViewGroup) card).getChildAt(0);
+        int accentColor = Color.parseColor(themeDao.getAccentColor());
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            new int[]{accentColor, adjustColor(accentColor, 0.7f)}
+        );
+        gradient.setCornerRadius(20 * getResources().getDisplayMetrics().density);
+        cardContent.setBackground(gradient);
         
         findNextClass();
         startCountdown();
         
         return view;
+    }
+    
+    private int adjustColor(int color, float factor) {
+        int a = Color.alpha(color);
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.argb(a, Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
     }
     
     private void findNextClass() {
