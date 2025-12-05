@@ -54,25 +54,8 @@ public class ModulesFragment extends Fragment {
     }
     
     private void showAddDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Add Module");
-        
-        EditText input = new EditText(getActivity());
-        input.setHint("Module name");
-        builder.setView(input);
-        
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String name = input.getText().toString().trim();
-            if (!name.isEmpty()) {
-                Module module = new Module();
-                module.name = name;
-                moduleDao.insertModule(module);
-                loadModules();
-                Toast.makeText(getActivity(), "Module added!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+        android.content.Intent intent = new android.content.Intent(getActivity(), AddModuleActivity.class);
+        startActivity(intent);
     }
     
     private void showEditDialog(Module module) {

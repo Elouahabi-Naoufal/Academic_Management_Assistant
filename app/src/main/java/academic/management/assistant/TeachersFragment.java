@@ -54,25 +54,8 @@ public class TeachersFragment extends Fragment {
     }
     
     private void showAddDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Add Teacher");
-        
-        EditText input = new EditText(getActivity());
-        input.setHint("Teacher name");
-        builder.setView(input);
-        
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String name = input.getText().toString().trim();
-            if (!name.isEmpty()) {
-                Teacher teacher = new Teacher();
-                teacher.fullName = name;
-                teacherDao.insertTeacher(teacher);
-                loadTeachers();
-                Toast.makeText(getActivity(), "Teacher added!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+        android.content.Intent intent = new android.content.Intent(getActivity(), AddTeacherActivity.class);
+        startActivity(intent);
     }
     
     private void showEditDialog(Teacher teacher) {
