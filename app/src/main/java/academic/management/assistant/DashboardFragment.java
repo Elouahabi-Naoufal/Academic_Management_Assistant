@@ -19,6 +19,7 @@ import academic.management.assistant.model.ClassItem;
 public class DashboardFragment extends Fragment {
     
     private TextView nextClassName, countdown, nextClassDetails;
+    private TextView classesCount, modulesCount, teachersCount;
     private Handler handler = new Handler();
     private ClassDao classDao;
     private ClassItem nextClass;
@@ -34,6 +35,9 @@ public class DashboardFragment extends Fragment {
         nextClassName = view.findViewById(R.id.nextClassName);
         countdown = view.findViewById(R.id.countdown);
         nextClassDetails = view.findViewById(R.id.nextClassDetails);
+        classesCount = view.findViewById(R.id.classesCount);
+        modulesCount = view.findViewById(R.id.modulesCount);
+        teachersCount = view.findViewById(R.id.teachersCount);
         
         // Apply accent color to card
         com.google.android.material.card.MaterialCardView card = view.findViewById(R.id.countdownCard);
@@ -48,6 +52,7 @@ public class DashboardFragment extends Fragment {
         
         findNextClass();
         startCountdown();
+        loadStatistics();
         
         return view;
     }
@@ -169,10 +174,24 @@ public class DashboardFragment extends Fragment {
         countdown.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
     }
     
+    private void loadStatistics() {
+        academic.management.assistant.database.ModuleDao moduleDao = new academic.management.assistant.database.ModuleDao(new academic.management.assistant.database.DatabaseHelper(getActivity()));
+        academic.management.assistant.database.TeacherDao teacherDao = new academic.management.assistant.database.TeacherDao(new academic.management.assistant.database.DatabaseHelper(getActivity()));
+        
+        int classCount = classDao.getAllClasses().size();
+        int moduleCount = moduleDao.getAllModules().size();
+        int teacherCount = teacherDao.getAllTeachers().size();
+        
+        classesCount.setText(String.valueOf(classCount));
+        modulesCount.setText(String.valueOf(moduleCount));
+        teachersCount.setText(String.valueOf(teacherCount));
+    }
+    
     @Override
     public void onResume() {
         super.onResume();
         findNextClass();
+        loadStatistics();
     }
     
     @Override
