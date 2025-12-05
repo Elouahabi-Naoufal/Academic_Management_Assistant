@@ -48,4 +48,19 @@ public class ModuleDao {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("module", "id = ?", new String[]{String.valueOf(id)});
     }
+    
+    public Module getModuleById(int id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id, name FROM module WHERE id = ?", new String[]{String.valueOf(id)});
+        
+        Module module = null;
+        if (cursor.moveToFirst()) {
+            module = new Module();
+            module.id = cursor.getInt(0);
+            module.name = cursor.getString(1);
+        }
+        
+        cursor.close();
+        return module;
+    }
 }

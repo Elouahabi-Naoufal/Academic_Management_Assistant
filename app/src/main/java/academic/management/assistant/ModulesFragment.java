@@ -76,29 +76,9 @@ public class ModulesFragment extends Fragment {
     }
     
     private void showEditDialog(Module module) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Edit Module");
-        
-        EditText input = new EditText(getActivity());
-        input.setText(module.name);
-        builder.setView(input);
-        
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = input.getText().toString().trim();
-            if (!name.isEmpty()) {
-                module.name = name;
-                moduleDao.updateModule(module);
-                loadModules();
-                Toast.makeText(getActivity(), "Module updated!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Delete", (dialog, which) -> {
-            moduleDao.deleteModule(module.id);
-            loadModules();
-            Toast.makeText(getActivity(), "Module deleted!", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNeutralButton("Cancel", null);
-        builder.show();
+        android.content.Intent intent = new android.content.Intent(getActivity(), EditModuleActivity.class);
+        intent.putExtra("MODULE_ID", module.id);
+        startActivity(intent);
     }
     
     @Override

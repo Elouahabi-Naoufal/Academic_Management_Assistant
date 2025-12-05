@@ -76,43 +76,9 @@ public class TeachersFragment extends Fragment {
     }
     
     private void showEditDialog(Teacher teacher) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Edit Teacher");
-        
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(getActivity());
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
-        
-        EditText nameInput = new EditText(getActivity());
-        nameInput.setText(teacher.fullName);
-        nameInput.setHint("Teacher name");
-        layout.addView(nameInput);
-        
-        EditText imageInput = new EditText(getActivity());
-        imageInput.setText(teacher.imagePath != null ? teacher.imagePath : "");
-        imageInput.setHint("Image path (optional)");
-        layout.addView(imageInput);
-        
-        builder.setView(layout);
-        
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = nameInput.getText().toString().trim();
-            String imagePath = imageInput.getText().toString().trim();
-            if (!name.isEmpty()) {
-                teacher.fullName = name;
-                teacher.imagePath = imagePath.isEmpty() ? null : imagePath;
-                teacherDao.updateTeacher(teacher);
-                loadTeachers();
-                Toast.makeText(getActivity(), "Teacher updated!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Delete", (dialog, which) -> {
-            teacherDao.deleteTeacher(teacher.id);
-            loadTeachers();
-            Toast.makeText(getActivity(), "Teacher deleted!", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNeutralButton("Cancel", null);
-        builder.show();
+        android.content.Intent intent = new android.content.Intent(getActivity(), EditTeacherActivity.class);
+        intent.putExtra("TEACHER_ID", teacher.id);
+        startActivity(intent);
     }
     
     @Override

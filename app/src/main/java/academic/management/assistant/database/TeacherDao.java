@@ -51,4 +51,20 @@ public class TeacherDao {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("teacher", "id = ?", new String[]{String.valueOf(id)});
     }
+    
+    public Teacher getTeacherById(int id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id, full_name, image_path FROM teacher WHERE id = ?", new String[]{String.valueOf(id)});
+        
+        Teacher teacher = null;
+        if (cursor.moveToFirst()) {
+            teacher = new Teacher();
+            teacher.id = cursor.getInt(0);
+            teacher.fullName = cursor.getString(1);
+            teacher.imagePath = cursor.getString(2);
+        }
+        
+        cursor.close();
+        return teacher;
+    }
 }

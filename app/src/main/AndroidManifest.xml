@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,14 @@
             
         <activity
             android:name=".EditClassActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".EditModuleActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".EditTeacherActivity"
             android:exported="false" />
 
     </application>
