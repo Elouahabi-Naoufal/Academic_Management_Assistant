@@ -74,7 +74,16 @@
                 android:layout_height="36dp"
                 android:text="Change"
                 android:textSize="12sp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cropImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Crop"
+                android:textSize="12sp"
+                android:layout_marginEnd="4dp"
                 android:visibility="gone" />
 
             <Button
@@ -83,7 +92,7 @@
                 android:layout_height="36dp"
                 android:text="Remove"
                 android:textSize="12sp"
-                android:background="@drawable/button_secondary"
+                android:background="@drawable/button_danger"
                 android:visibility="gone" />
 
         </LinearLayout>

@@ -99,6 +99,7 @@ public class EditTeacherActivity extends AppCompatActivity {
         
         Button addImageBtn = findViewById(R.id.addImageBtn);
         Button changeImageBtn = findViewById(R.id.changeImageBtn);
+        Button cropImageBtn = findViewById(R.id.cropImageBtn);
         Button removeImageBtn = findViewById(R.id.removeImageBtn);
         
         addImageBtn.post(() -> {
@@ -119,8 +120,18 @@ public class EditTeacherActivity extends AppCompatActivity {
             changeImageBtn.setBackground(changeBg);
         });
         
+        cropImageBtn.post(() -> {
+            int accentColor = Color.parseColor(themeDao.getAccentColor());
+            GradientDrawable cropBg = new GradientDrawable();
+            cropBg.setShape(GradientDrawable.RECTANGLE);
+            cropBg.setColor(accentColor);
+            cropBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+            cropImageBtn.setBackground(cropBg);
+        });
+        
         addImageBtn.setOnClickListener(v -> openImagePicker());
-        changeImageBtn.setOnClickListener(v -> showImageOptions());
+        changeImageBtn.setOnClickListener(v -> openImagePicker());
+        cropImageBtn.setOnClickListener(v -> cropCurrentImage());
         removeImageBtn.setOnClickListener(v -> removeImage());
         
         updateButtonVisibility();
@@ -166,18 +177,7 @@ public class EditTeacherActivity extends AppCompatActivity {
         }
     }
     
-    private void showImageOptions() {
-        new AlertDialog.Builder(this)
-            .setTitle("Select Image")
-            .setItems(new String[]{"Choose from Gallery", "Crop Current Image"}, (dialog, which) -> {
-                if (which == 0) {
-                    openImagePicker();
-                } else {
-                    cropCurrentImage();
-                }
-            })
-            .show();
-    }
+
     
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -244,17 +244,26 @@ public class EditTeacherActivity extends AppCompatActivity {
             .setTitle("Remove Image")
             .setMessage("Remove teacher photo?")
             .setPositiveButton("Remove", (dialog, which) -> {
+                // Delete image file from app storage
                 if (teacher.imagePath != null && !teacher.imagePath.isEmpty()) {
                     File imageFile = new File(teacher.imagePath);
                     if (imageFile.exists()) {
-                        imageFile.delete();
+                        boolean deleted = imageFile.delete();
+                        android.util.Log.d("IMAGE_DELETE", "File deleted: " + deleted + " Path: " + teacher.imagePath);
                     }
                 }
+                
+                // Clear database reference
                 teacher.imagePath = null;
                 teacherDao.updateTeacher(teacher);
+                
+                // Reset UI - clear cache and force reload
+                teacherImage.setImageBitmap(null);
+                teacherImage.setImageDrawable(null);
                 teacherImage.setImageResource(android.R.drawable.ic_menu_camera);
                 updateButtonVisibility();
-                Toast.makeText(this, "Image removed!", Toast.LENGTH_SHORT).show();
+                
+                Toast.makeText(this, "Image removed from app storage!", Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton("Cancel", null)
             .show();
@@ -279,7 +288,7 @@ public class EditTeacherActivity extends AppCompatActivity {
             teacherDao.updateTeacher(teacher);
             loadTeacherImage();
             
-            Toast.makeText(this, "Image added! Use Change → Crop to adjust it", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Image added!", Toast.LENGTH_SHORT).show();
             
         } catch (Exception e) {
             Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
@@ -300,6 +309,7 @@ public class EditTeacherActivity extends AppCompatActivity {
     private void updateButtonVisibility() {
         Button addImageBtn = findViewById(R.id.addImageBtn);
         Button changeImageBtn = findViewById(R.id.changeImageBtn);
+        Button cropImageBtn = findViewById(R.id.cropImageBtn);
         Button removeImageBtn = findViewById(R.id.removeImageBtn);
         
         boolean hasImage = teacher.imagePath != null && !teacher.imagePath.isEmpty() && 
@@ -307,6 +317,7 @@ public class EditTeacherActivity extends AppCompatActivity {
         
         addImageBtn.setVisibility(hasImage ? android.view.View.GONE : android.view.View.VISIBLE);
         changeImageBtn.setVisibility(hasImage ? android.view.View.VISIBLE : android.view.View.GONE);
+        cropImageBtn.setVisibility(hasImage ? android.view.View.VISIBLE : android.view.View.GONE);
         removeImageBtn.setVisibility(hasImage ? android.view.View.VISIBLE : android.view.View.GONE);
     }
     
