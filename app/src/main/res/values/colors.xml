@@ -20,9 +20,9 @@
     <color name="surface_variant">#F1F5F9</color>
     
     <!-- Dark Theme -->
-    <color name="background_dark">#0F172A</color>
-    <color name="surface_dark">#1E293B</color>
-    <color name="surface_dark_elevated">#334155</color>
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+    <color name="surface_dark_elevated">#2C2C2C</color>
     
     <!-- Text -->
     <color name="text_primary_light">#0F172A</color>
