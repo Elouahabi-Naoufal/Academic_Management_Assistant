@@ -35,6 +35,11 @@ public class TeachersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         
         FloatingActionButton fab = view.findViewById(R.id.fabAddTeacher);
+        fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+            android.graphics.Color.parseColor(
+                new academic.management.assistant.database.ThemeDao(dbHelper).getAccentColor()
+            )
+        ));
         fab.setOnClickListener(v -> showAddDialog());
         
         loadTeachers();

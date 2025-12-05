@@ -34,6 +34,11 @@ public class ClassesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         
         FloatingActionButton fab = view.findViewById(R.id.fabAddClass);
+        fab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+            android.graphics.Color.parseColor(
+                new academic.management.assistant.database.ThemeDao(dbHelper).getAccentColor()
+            )
+        ));
         fab.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddClassActivity.class);
             startActivity(intent);

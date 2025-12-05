@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         switch (color) {
             case "#6200EE": return R.style.AccentPurple;
             case "#2196F3": return R.style.AccentBlue;
-            case "#4CAF50": return R.style.AccentGreen;
+            case "#10B981": return R.style.AccentGreen;
             case "#F44336": return R.style.AccentRed;
             case "#FF9800": return R.style.AccentOrange;
             default: return R.style.AccentPurple;

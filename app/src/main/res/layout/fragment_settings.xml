@@ -115,9 +115,7 @@
                         android:id="@+id/colorGreen"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_margin="8dp"
-                        android:background="@drawable/fab_gradient"
-                        android:backgroundTint="@color/accent" />
+                        android:layout_margin="8dp" />
 
                     <View
                         android:id="@+id/colorRed"

@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment {
         
         setupColorButton(view.findViewById(R.id.colorPurple), "#6200EE");
         setupColorButton(view.findViewById(R.id.colorBlue), "#2196F3");
-        setupColorButton(view.findViewById(R.id.colorGreen), "#4CAF50");
+        setupColorButton(view.findViewById(R.id.colorGreen), "#10B981");
         setupColorButton(view.findViewById(R.id.colorRed), "#F44336");
         setupColorButton(view.findViewById(R.id.colorOrange), "#FF9800");
         
