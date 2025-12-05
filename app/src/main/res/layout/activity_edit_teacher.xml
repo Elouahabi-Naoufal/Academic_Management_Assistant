@@ -51,7 +51,42 @@
             android:background="@drawable/input_background"
             android:scaleType="centerCrop"
             android:src="@android:drawable/ic_menu_camera"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/addImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Add Photo"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/changeImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Change"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/removeImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Remove"
+                android:textSize="12sp"
+                android:background="@drawable/button_secondary"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"

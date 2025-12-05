@@ -38,6 +38,7 @@ public class EditTeacherActivity extends AppCompatActivity {
     private ClassDao classDao;
     private Teacher teacher;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<Intent> imageCropLauncher;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +84,46 @@ public class EditTeacherActivity extends AppCompatActivity {
             }
         );
         
-        teacherImage.setOnClickListener(v -> openImagePicker());
+        imageCropLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Bundle extras = result.getData().getExtras();
+                    if (extras != null) {
+                        Bitmap croppedBitmap = (Bitmap) extras.get("data");
+                        saveCroppedImage(croppedBitmap);
+                    }
+                }
+            }
+        );
+        
+        Button addImageBtn = findViewById(R.id.addImageBtn);
+        Button changeImageBtn = findViewById(R.id.changeImageBtn);
+        Button removeImageBtn = findViewById(R.id.removeImageBtn);
+        
+        addImageBtn.post(() -> {
+            int accentColor = Color.parseColor(themeDao.getAccentColor());
+            GradientDrawable addBg = new GradientDrawable();
+            addBg.setShape(GradientDrawable.RECTANGLE);
+            addBg.setColor(accentColor);
+            addBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+            addImageBtn.setBackground(addBg);
+        });
+        
+        changeImageBtn.post(() -> {
+            int accentColor = Color.parseColor(themeDao.getAccentColor());
+            GradientDrawable changeBg = new GradientDrawable();
+            changeBg.setShape(GradientDrawable.RECTANGLE);
+            changeBg.setColor(accentColor);
+            changeBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+            changeImageBtn.setBackground(changeBg);
+        });
+        
+        addImageBtn.setOnClickListener(v -> openImagePicker());
+        changeImageBtn.setOnClickListener(v -> showImageOptions());
+        removeImageBtn.setOnClickListener(v -> removeImage());
+        
+        updateButtonVisibility();
         
         Button saveBtn = findViewById(R.id.saveBtn);
         Button deleteBtn = findViewById(R.id.deleteBtn);
@@ -126,10 +166,98 @@ public class EditTeacherActivity extends AppCompatActivity {
         }
     }
     
+    private void showImageOptions() {
+        new AlertDialog.Builder(this)
+            .setTitle("Select Image")
+            .setItems(new String[]{"Choose from Gallery", "Crop Current Image"}, (dialog, which) -> {
+                if (which == 0) {
+                    openImagePicker();
+                } else {
+                    cropCurrentImage();
+                }
+            })
+            .show();
+    }
+    
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         imagePickerLauncher.launch(intent);
+    }
+    
+    private void cropCurrentImage() {
+        if (teacher.imagePath == null || teacher.imagePath.isEmpty()) {
+            Toast.makeText(this, "No image to crop", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        try {
+            File imageFile = new File(teacher.imagePath);
+            String imageUriString = android.provider.MediaStore.Images.Media.insertImage(
+                getContentResolver(), 
+                teacher.imagePath, 
+                "temp_crop", 
+                null
+            );
+            
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(Uri.parse(imageUriString), "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 200);
+            cropIntent.putExtra("outputY", 200);
+            cropIntent.putExtra("return-data", true);
+            
+            imageCropLauncher.launch(cropIntent);
+            
+        } catch (Exception e) {
+            Toast.makeText(this, "Crop not supported on this device", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void saveCroppedImage(Bitmap croppedBitmap) {
+        try {
+            File imagesDir = new File(getFilesDir(), "teacher_images");
+            if (!imagesDir.exists()) imagesDir.mkdirs();
+            
+            String fileName = "teacher_" + teacher.id + ".jpg";
+            File imageFile = new File(imagesDir, fileName);
+            
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            croppedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+            outputStream.close();
+            
+            teacher.imagePath = imageFile.getAbsolutePath();
+            teacherDao.updateTeacher(teacher);
+            loadTeacherImage();
+            
+            Toast.makeText(this, "Image cropped!", Toast.LENGTH_SHORT).show();
+            
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to save cropped image", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void removeImage() {
+        new AlertDialog.Builder(this)
+            .setTitle("Remove Image")
+            .setMessage("Remove teacher photo?")
+            .setPositiveButton("Remove", (dialog, which) -> {
+                if (teacher.imagePath != null && !teacher.imagePath.isEmpty()) {
+                    File imageFile = new File(teacher.imagePath);
+                    if (imageFile.exists()) {
+                        imageFile.delete();
+                    }
+                }
+                teacher.imagePath = null;
+                teacherDao.updateTeacher(teacher);
+                teacherImage.setImageResource(android.R.drawable.ic_menu_camera);
+                updateButtonVisibility();
+                Toast.makeText(this, "Image removed!", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
     
     private void saveImageToApp(Uri imageUri) {
@@ -151,6 +279,8 @@ public class EditTeacherActivity extends AppCompatActivity {
             teacherDao.updateTeacher(teacher);
             loadTeacherImage();
             
+            Toast.makeText(this, "Image added! Use Change → Crop to adjust it", Toast.LENGTH_LONG).show();
+            
         } catch (Exception e) {
             Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
         }
@@ -164,6 +294,20 @@ public class EditTeacherActivity extends AppCompatActivity {
                 teacherImage.setImageBitmap(bitmap);
             }
         }
+        updateButtonVisibility();
+    }
+    
+    private void updateButtonVisibility() {
+        Button addImageBtn = findViewById(R.id.addImageBtn);
+        Button changeImageBtn = findViewById(R.id.changeImageBtn);
+        Button removeImageBtn = findViewById(R.id.removeImageBtn);
+        
+        boolean hasImage = teacher.imagePath != null && !teacher.imagePath.isEmpty() && 
+                          new File(teacher.imagePath).exists();
+        
+        addImageBtn.setVisibility(hasImage ? android.view.View.GONE : android.view.View.VISIBLE);
+        changeImageBtn.setVisibility(hasImage ? android.view.View.VISIBLE : android.view.View.GONE);
+        removeImageBtn.setVisibility(hasImage ? android.view.View.VISIBLE : android.view.View.GONE);
     }
     
     private void saveTeacher() {
