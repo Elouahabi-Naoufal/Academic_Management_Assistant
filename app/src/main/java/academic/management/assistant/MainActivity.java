@@ -16,6 +16,7 @@ import academic.management.assistant.database.ThemeDao;
 public class MainActivity extends AppCompatActivity {
     private LinearLayout btnDashboard, btnClasses, btnModules, btnTeachers, btnSettings;
     private int accentColor;
+    private static final String PREF_CURRENT_FRAGMENT = "current_fragment";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,28 +44,31 @@ public class MainActivity extends AppCompatActivity {
         
         btnDashboard.setOnClickListener(v -> {
             selectTab(btnDashboard);
-            showFragment(new DashboardFragment());
+            showFragment(new DashboardFragment(), "dashboard");
         });
         btnClasses.setOnClickListener(v -> {
             selectTab(btnClasses);
-            showFragment(new ClassesFragment());
+            showFragment(new ClassesFragment(), "classes");
         });
         btnModules.setOnClickListener(v -> {
             selectTab(btnModules);
-            showFragment(new ModulesFragment());
+            showFragment(new ModulesFragment(), "modules");
         });
         btnTeachers.setOnClickListener(v -> {
             selectTab(btnTeachers);
-            showFragment(new TeachersFragment());
+            showFragment(new TeachersFragment(), "teachers");
         });
         btnSettings.setOnClickListener(v -> {
             selectTab(btnSettings);
-            showFragment(new SettingsFragment());
+            showFragment(new SettingsFragment(), "settings");
         });
         
         applyAccentToTabs();
-        selectTab(btnDashboard);
-        showFragment(new DashboardFragment());
+        
+        // Restore last fragment or show dashboard
+        String lastFragment = getSharedPreferences("app_prefs", MODE_PRIVATE)
+            .getString(PREF_CURRENT_FRAGMENT, "dashboard");
+        restoreFragment(lastFragment);
     }
     
     private void selectTab(LinearLayout selected) {
@@ -96,10 +100,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
-    private void showFragment(android.app.Fragment fragment) {
+    private void showFragment(android.app.Fragment fragment, String tag) {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
+            .edit()
+            .putString(PREF_CURRENT_FRAGMENT, tag)
+            .apply();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.commit();
+    }
+    
+    private void restoreFragment(String tag) {
+        switch (tag) {
+            case "classes":
+                selectTab(btnClasses);
+                showFragment(new ClassesFragment(), "classes");
+                break;
+            case "modules":
+                selectTab(btnModules);
+                showFragment(new ModulesFragment(), "modules");
+                break;
+            case "teachers":
+                selectTab(btnTeachers);
+                showFragment(new TeachersFragment(), "teachers");
+                break;
+            case "settings":
+                selectTab(btnSettings);
+                showFragment(new SettingsFragment(), "settings");
+                break;
+            default:
+                selectTab(btnDashboard);
+                showFragment(new DashboardFragment(), "dashboard");
+                break;
+        }
     }
     
     private int getAccentStyle(String color) {
