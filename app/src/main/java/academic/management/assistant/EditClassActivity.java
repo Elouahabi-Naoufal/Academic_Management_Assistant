@@ -1,6 +1,5 @@
 package academic.management.assistant;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.widget.Button;
@@ -9,15 +8,20 @@ import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.widget.CheckBox;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import academic.management.assistant.database.ClassDao;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ModuleDao;
 import academic.management.assistant.database.TeacherDao;
+import academic.management.assistant.database.ThemeDao;
 import academic.management.assistant.model.ClassItem;
 import java.util.List;
 import java.util.ArrayList;
 
-public class EditClassActivity extends Activity {
+public class EditClassActivity extends AppCompatActivity {
     
     private EditText titleEdit, locationEdit, startTimeEdit, endTimeEdit;
     private Spinner weekdaySpinner, moduleSpinner, teacherSpinner;
@@ -29,10 +33,19 @@ public class EditClassActivity extends Activity {
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        ThemeDao themeDao = new ThemeDao(dbHelper);
+        
+        int nightMode = themeDao.isDarkTheme() ? 
+            AppCompatDelegate.MODE_NIGHT_YES : 
+            AppCompatDelegate.MODE_NIGHT_NO;
+        getDelegate().setLocalNightMode(nightMode);
+        
+        getTheme().applyStyle(getAccentStyle(themeDao.getAccentColor()), true);
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_class);
         
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
         classDao = new ClassDao(dbHelper);
         ModuleDao moduleDao = new ModuleDao(dbHelper);
         TeacherDao teacherDao = new TeacherDao(dbHelper);
@@ -89,12 +102,28 @@ public class EditClassActivity extends Activity {
         loadClassData();
         
         Button saveBtn = findViewById(R.id.saveBtn);
-        saveBtn.setOnClickListener(v -> saveClass());
-        
         Button deleteBtn = findViewById(R.id.deleteBtn);
-        deleteBtn.setOnClickListener(v -> showDeleteDialog());
-        
         Button cancelBtn = findViewById(R.id.cancelBtn);
+        
+        saveBtn.post(() -> {
+            int accentColor = Color.parseColor(themeDao.getAccentColor());
+            GradientDrawable saveBg = new GradientDrawable();
+            saveBg.setShape(GradientDrawable.RECTANGLE);
+            saveBg.setColor(accentColor);
+            saveBg.setCornerRadius(12 * getResources().getDisplayMetrics().density);
+            saveBtn.setBackground(saveBg);
+        });
+        
+        deleteBtn.post(() -> {
+            GradientDrawable deleteBg = new GradientDrawable();
+            deleteBg.setShape(GradientDrawable.RECTANGLE);
+            deleteBg.setColor(Color.parseColor("#EF4444"));
+            deleteBg.setCornerRadius(12 * getResources().getDisplayMetrics().density);
+            deleteBtn.setBackground(deleteBg);
+        });
+        
+        saveBtn.setOnClickListener(v -> saveClass());
+        deleteBtn.setOnClickListener(v -> showDeleteDialog());
         cancelBtn.setOnClickListener(v -> finish());
     }
     
@@ -150,5 +179,16 @@ public class EditClassActivity extends Activity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+    
+    private int getAccentStyle(String color) {
+        switch (color) {
+            case "#6200EE": return R.style.AccentPurple;
+            case "#2196F3": return R.style.AccentBlue;
+            case "#10B981": return R.style.AccentGreen;
+            case "#F44336": return R.style.AccentRed;
+            case "#FF9800": return R.style.AccentOrange;
+            default: return R.style.AccentPurple;
+        }
     }
 }
