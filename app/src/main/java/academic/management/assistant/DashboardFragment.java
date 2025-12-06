@@ -20,6 +20,8 @@ public class DashboardFragment extends Fragment {
     
     private TextView nextClassName, countdown, nextClassDetails;
     private TextView classesCount, modulesCount, teachersCount;
+    private TextView totalHoursText;
+    private android.widget.LinearLayout activeDaysContainer;
     private Handler handler = new Handler();
     private ClassDao classDao;
     private ClassItem nextClass;
@@ -38,6 +40,8 @@ public class DashboardFragment extends Fragment {
         classesCount = view.findViewById(R.id.classesCount);
         modulesCount = view.findViewById(R.id.modulesCount);
         teachersCount = view.findViewById(R.id.teachersCount);
+        totalHoursText = view.findViewById(R.id.totalHoursText);
+        activeDaysContainer = view.findViewById(R.id.activeDaysContainer);
         
         // Apply accent color to card
         com.google.android.material.card.MaterialCardView card = view.findViewById(R.id.countdownCard);
@@ -53,6 +57,7 @@ public class DashboardFragment extends Fragment {
         findNextClass();
         startCountdown();
         loadStatistics();
+        loadActiveDays();
         
         return view;
     }
@@ -187,11 +192,89 @@ public class DashboardFragment extends Fragment {
         teachersCount.setText(String.valueOf(teacherCount));
     }
     
+    private void loadActiveDays() {
+        java.util.List<ClassItem> allClasses = classDao.getAllClasses();
+        java.util.Map<Integer, Float> dayHours = new java.util.HashMap<>();
+        String[] dayNames = {"", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        
+        // Calculate total hours per day
+        for (ClassItem classItem : allClasses) {
+            try {
+                String[] startParts = classItem.startTime.split(":");
+                String[] endParts = classItem.endTime.split(":");
+                
+                float startHour = Integer.parseInt(startParts[0]) + Integer.parseInt(startParts[1]) / 60f;
+                float endHour = Integer.parseInt(endParts[0]) + Integer.parseInt(endParts[1]) / 60f;
+                float duration = endHour - startHour;
+                
+                dayHours.put(classItem.weekday, dayHours.getOrDefault(classItem.weekday, 0f) + duration);
+            } catch (Exception e) {
+                // Skip invalid time formats
+            }
+        }
+        
+        // Calculate total hours
+        float totalHours = 0;
+        for (Float hours : dayHours.values()) {
+            totalHours += hours;
+        }
+        
+        // Update total hours display
+        totalHoursText.setText(String.format("%.1fh", totalHours));
+        
+        // Sort days by hours (descending)
+        java.util.List<java.util.Map.Entry<Integer, Float>> sortedDays = new java.util.ArrayList<>(dayHours.entrySet());
+        sortedDays.sort((a, b) -> Float.compare(b.getValue(), a.getValue()));
+        
+        activeDaysContainer.removeAllViews();
+        
+        if (sortedDays.isEmpty()) {
+            android.widget.TextView noData = new android.widget.TextView(getActivity());
+            noData.setText("No classes scheduled");
+            noData.setTextSize(14);
+            android.util.TypedValue typedValue3 = new android.util.TypedValue();
+            getActivity().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue3, true);
+            noData.setTextColor(typedValue3.data);
+            noData.setAlpha(0.7f);
+            activeDaysContainer.addView(noData);
+            return;
+        }
+        
+        for (java.util.Map.Entry<Integer, Float> entry : sortedDays) {
+            android.widget.LinearLayout dayRow = new android.widget.LinearLayout(getActivity());
+            dayRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+            dayRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            dayRow.setPadding(0, 8, 0, 8);
+            
+            android.widget.TextView dayName = new android.widget.TextView(getActivity());
+            dayName.setText(dayNames[entry.getKey()]);
+            dayName.setTextSize(16);
+            android.util.TypedValue typedValue = new android.util.TypedValue();
+            getActivity().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true);
+            dayName.setTextColor(typedValue.data);
+            dayName.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+            
+            android.widget.TextView hours = new android.widget.TextView(getActivity());
+            hours.setText(String.format("%.1fh", entry.getValue()));
+            hours.setTextSize(14);
+            android.util.TypedValue typedValue2 = new android.util.TypedValue();
+            getActivity().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue2, true);
+            hours.setTextColor(typedValue2.data);
+            hours.setAlpha(0.7f);
+            hours.setTypeface(null, android.graphics.Typeface.BOLD);
+            
+            dayRow.addView(dayName);
+            dayRow.addView(hours);
+            activeDaysContainer.addView(dayRow);
+        }
+    }
+    
     @Override
     public void onResume() {
         super.onResume();
         findNextClass();
         loadStatistics();
+        loadActiveDays();
     }
     
     @Override
