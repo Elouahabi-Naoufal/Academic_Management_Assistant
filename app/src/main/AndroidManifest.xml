@@ -43,6 +43,22 @@
         <activity
             android:name=".AddTeacherActivity"
             android:exported="false" />
+            
+        <activity
+            android:name=".YearManagementActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".YearDetailsActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".RestoreActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".ArchiveActivity"
+            android:exported="false" />
 
     </application>
 

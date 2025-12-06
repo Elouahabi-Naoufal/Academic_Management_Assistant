@@ -178,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
         if (academicYearText != null) {
             academicYearText.setText(themeDao.getAcademicYear());
         }
+        
+        android.widget.TextView currentAcademicYearText = findViewById(R.id.currentAcademicYearText);
+        if (currentAcademicYearText != null) {
+            currentAcademicYearText.setText(themeDao.getCurrentAcademicYearName());
+        }
     }
     
     private int adjustColor(int color, float factor) {
@@ -198,6 +203,11 @@ public class MainActivity extends AppCompatActivity {
             android.widget.TextView academicYearText = findViewById(R.id.academicYearText);
             if (academicYearText != null) {
                 academicYearText.setText(themeDao.getAcademicYear());
+            }
+            
+            android.widget.TextView currentAcademicYearText = findViewById(R.id.currentAcademicYearText);
+            if (currentAcademicYearText != null) {
+                currentAcademicYearText.setText(themeDao.getCurrentAcademicYearName());
             }
         }
     }

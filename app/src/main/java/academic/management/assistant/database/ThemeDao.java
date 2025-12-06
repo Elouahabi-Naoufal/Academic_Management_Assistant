@@ -89,10 +89,28 @@ public class ThemeDao {
         return academicYear;
     }
     
+    public String getCurrentAcademicYearName() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT current_academic_year FROM theme LIMIT 1", null);
+        String yearName = "2024-2025";
+        if (cursor.moveToFirst()) {
+            yearName = cursor.getString(0);
+        }
+        cursor.close();
+        return yearName;
+    }
+    
     public void saveAcademicYear(String academicYear) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("academic_year", academicYear);
+        db.update("theme", values, null, null);
+    }
+    
+    public void saveCurrentAcademicYearName(String yearName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("current_academic_year", yearName);
         db.update("theme", values, null, null);
     }
 }

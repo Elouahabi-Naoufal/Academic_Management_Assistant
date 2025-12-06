@@ -184,4 +184,39 @@ public class ClassDao {
         cursor.close();
         return classes;
     }
+    
+    public List<ClassItem> getClassesByYear(int yearId) {
+        List<ClassItem> classes = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT c.id, c.title, c.module_id, m.name as module_name, " +
+                      "c.teacher_id, t.full_name as teacher_name, c.location, " +
+                      "c.weekday, c.start_time, c.end_time, c.is_archived " +
+                      "FROM class c " +
+                      "LEFT JOIN module m ON c.module_id = m.id " +
+                      "LEFT JOIN teacher t ON c.teacher_id = t.id " +
+                      "WHERE c.year_id = ? " +
+                      "ORDER BY c.weekday, c.start_time";
+        
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(yearId)});
+        
+        while (cursor.moveToNext()) {
+            ClassItem item = new ClassItem();
+            item.id = cursor.getInt(0);
+            item.title = cursor.getString(1);
+            item.moduleId = cursor.getInt(2);
+            item.moduleName = cursor.getString(3);
+            item.teacherId = cursor.getInt(4);
+            item.teacherName = cursor.getString(5);
+            item.location = cursor.getString(6);
+            item.weekday = cursor.getInt(7);
+            item.startTime = cursor.getString(8);
+            item.endTime = cursor.getString(9);
+            item.isArchived = cursor.getInt(10) == 1;
+            classes.add(item);
+        }
+        
+        cursor.close();
+        return classes;
+    }
 }

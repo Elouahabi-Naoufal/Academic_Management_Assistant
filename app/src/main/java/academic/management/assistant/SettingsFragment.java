@@ -105,6 +105,12 @@ public class SettingsFragment extends Fragment {
             }
         });
         
+        // Current Academic Year Name
+        setupCurrentAcademicYear(view);
+        
+        // Academic Year Management Section
+        setupYearManagement(view);
+        
         setupColorButton(view.findViewById(R.id.colorPurple), "#6200EE");
         setupColorButton(view.findViewById(R.id.colorBlue), "#2196F3");
         setupColorButton(view.findViewById(R.id.colorGreen), "#10B981");
@@ -112,6 +118,92 @@ public class SettingsFragment extends Fragment {
         setupColorButton(view.findViewById(R.id.colorOrange), "#FF9800");
         
         return view;
+    }
+    
+    private void setupYearManagement(View view) {
+        android.widget.Button manageYearsBtn = view.findViewById(R.id.manageYearsBtn);
+        android.widget.Button newYearBtn = view.findViewById(R.id.newYearBtn);
+        android.widget.Button archiveYearBtn = view.findViewById(R.id.archiveYearBtn);
+        
+        manageYearsBtn.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(getActivity(), YearManagementActivity.class);
+            startActivity(intent);
+        });
+        
+        newYearBtn.setOnClickListener(v -> showNewYearDialog());
+        archiveYearBtn.setOnClickListener(v -> showArchiveDialog());
+    }
+    
+    private void showNewYearDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        android.widget.EditText yearNameInput = new android.widget.EditText(getActivity());
+        yearNameInput.setHint("Enter new academic year name");
+        
+        builder.setTitle("Create New Academic Year")
+                .setView(yearNameInput)
+                .setPositiveButton("Create", (dialog, which) -> {
+                    String yearName = yearNameInput.getText().toString().trim();
+                    if (!yearName.isEmpty()) {
+                        createNewYear(yearName);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    
+    private void showArchiveDialog() {
+        new android.app.AlertDialog.Builder(getActivity())
+                .setTitle("Archive Current Year")
+                .setMessage("Choose what to archive:")
+                .setPositiveButton("Select Options", (dialog, which) -> {
+                    android.content.Intent intent = new android.content.Intent(getActivity(), ArchiveActivity.class);
+                    startActivity(intent);
+                })
+                .setNeutralButton("Archive All", (dialog, which) -> archiveCurrentYear())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    
+    private void createNewYear(String yearName) {
+        academic.management.assistant.database.DatabaseHelper dbHelper = new academic.management.assistant.database.DatabaseHelper(getActivity());
+        academic.management.assistant.database.YearDao yearDao = new academic.management.assistant.database.YearDao(dbHelper);
+        yearDao.createNewYear(yearName);
+        android.widget.Toast.makeText(getActivity(), "New academic year created", android.widget.Toast.LENGTH_SHORT).show();
+    }
+    
+    private void archiveCurrentYear() {
+        academic.management.assistant.database.DatabaseHelper dbHelper = new academic.management.assistant.database.DatabaseHelper(getActivity());
+        academic.management.assistant.database.YearDao yearDao = new academic.management.assistant.database.YearDao(dbHelper);
+        yearDao.archiveSelectedData(true, true, true);
+        android.widget.Toast.makeText(getActivity(), "All data archived", android.widget.Toast.LENGTH_SHORT).show();
+    }
+    
+    private void setupCurrentAcademicYear(View view) {
+        com.google.android.material.textfield.TextInputEditText currentAcademicYearEdit = view.findViewById(R.id.currentAcademicYearEdit);
+        android.widget.Button saveCurrentAcademicYearBtn = view.findViewById(R.id.saveCurrentAcademicYearBtn);
+        
+        if (currentAcademicYearEdit != null && saveCurrentAcademicYearBtn != null) {
+            currentAcademicYearEdit.setText(themeDao.getCurrentAcademicYearName());
+            
+            // Style save button
+            int accentColor = android.graphics.Color.parseColor(themeDao.getAccentColor());
+            android.graphics.drawable.GradientDrawable saveBg = new android.graphics.drawable.GradientDrawable();
+            saveBg.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+            saveBg.setColor(accentColor);
+            saveBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+            saveCurrentAcademicYearBtn.setBackground(saveBg);
+            
+            saveCurrentAcademicYearBtn.setOnClickListener(v -> {
+                String yearName = currentAcademicYearEdit.getText().toString().trim();
+                if (!yearName.isEmpty()) {
+                    themeDao.saveCurrentAcademicYearName(yearName);
+                    android.widget.Toast.makeText(getActivity(), "Academic year name saved", android.widget.Toast.LENGTH_SHORT).show();
+                    updateTopBarInMainActivity();
+                } else {
+                    android.widget.Toast.makeText(getActivity(), "Please enter an academic year name", android.widget.Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
     
     private void setupColorButton(View button, String color) {
