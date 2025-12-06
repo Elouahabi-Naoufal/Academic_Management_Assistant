@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
+import android.text.TextWatcher;
+import android.text.Editable;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
 
@@ -17,6 +20,8 @@ public class SettingsFragment extends Fragment {
     private ThemeDao themeDao;
     private SwitchMaterial darkModeSwitch;
     private SwitchMaterial systemThemeSwitch;
+    private TextInputEditText schoolNameEdit;
+    private Button saveSchoolNameBtn;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +52,32 @@ public class SettingsFragment extends Fragment {
             getActivity().recreate();
         });
         
+        schoolNameEdit = view.findViewById(R.id.schoolNameEdit);
+        saveSchoolNameBtn = view.findViewById(R.id.saveSchoolNameBtn);
+        
+        schoolNameEdit.setText(themeDao.getSchoolName());
+        
+        // Style save button
+        int accentColor = Color.parseColor(themeDao.getAccentColor());
+        GradientDrawable saveBg = new GradientDrawable();
+        saveBg.setShape(GradientDrawable.RECTANGLE);
+        saveBg.setColor(accentColor);
+        saveBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+        saveSchoolNameBtn.setBackground(saveBg);
+        
+        saveSchoolNameBtn.setOnClickListener(v -> {
+            String schoolName = schoolNameEdit.getText().toString().trim();
+            if (!schoolName.isEmpty()) {
+                themeDao.saveSchoolName(schoolName);
+                android.widget.Toast.makeText(getActivity(), "School name saved", android.widget.Toast.LENGTH_SHORT).show();
+                
+                // Update top bar immediately
+                updateTopBarInMainActivity(schoolName);
+            } else {
+                android.widget.Toast.makeText(getActivity(), "Please enter a school name", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
+        
         setupColorButton(view.findViewById(R.id.colorPurple), "#6200EE");
         setupColorButton(view.findViewById(R.id.colorBlue), "#2196F3");
         setupColorButton(view.findViewById(R.id.colorGreen), "#10B981");
@@ -67,5 +98,11 @@ public class SettingsFragment extends Fragment {
     private void setAccentColor(String color) {
         themeDao.saveTheme(themeDao.isDarkTheme(), color);
         getActivity().recreate();
+    }
+    
+    private void updateTopBarInMainActivity(String schoolName) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateSchoolNameInTopBar(schoolName);
+        }
     }
 }

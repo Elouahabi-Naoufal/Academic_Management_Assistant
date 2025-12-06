@@ -16,12 +16,17 @@ public class ThemeDao {
     }
     
     public void saveTheme(boolean isDark, String accentColor, boolean useSystemTheme) {
+        saveTheme(isDark, accentColor, useSystemTheme, getSchoolName());
+    }
+    
+    public void saveTheme(boolean isDark, String accentColor, boolean useSystemTheme, String schoolName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("DELETE FROM theme");
         ContentValues values = new ContentValues();
         values.put("is_dark", isDark ? 1 : 0);
         values.put("accent_color", accentColor);
         values.put("use_system_theme", useSystemTheme ? 1 : 0);
+        values.put("school_name", schoolName);
         db.insert("theme", null, values);
     }
     
@@ -56,5 +61,20 @@ public class ThemeDao {
         }
         cursor.close();
         return useSystem;
+    }
+    
+    public String getSchoolName() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT school_name FROM theme LIMIT 1", null);
+        String schoolName = "Academic Management";
+        if (cursor.moveToFirst()) {
+            schoolName = cursor.getString(0);
+        }
+        cursor.close();
+        return schoolName;
+    }
+    
+    public void saveSchoolName(String schoolName) {
+        saveTheme(isDarkTheme(), getAccentColor(), useSystemTheme(), schoolName);
     }
 }

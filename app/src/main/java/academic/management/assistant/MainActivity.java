@@ -15,6 +15,8 @@ import academic.management.assistant.database.ThemeDao;
 
 public class MainActivity extends AppCompatActivity {
     private LinearLayout btnDashboard, btnClasses, btnModules, btnTeachers, btnSettings;
+    private LinearLayout topBar;
+    private android.widget.TextView schoolNameText;
     private int accentColor;
     private static final String PREF_CURRENT_FRAGMENT = "current_fragment";
     
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         getTheme().applyStyle(getAccentStyle(themeDao.getAccentColor()), true);
         
         setContentView(R.layout.activity_main);
+        
+        setupTopBar(themeDao);
         
         btnDashboard = findViewById(R.id.btnDashboard);
         btnClasses = findViewById(R.id.btnClasses);
@@ -148,6 +152,26 @@ public class MainActivity extends AppCompatActivity {
             case "#F44336": return R.style.AccentRed;
             case "#FF9800": return R.style.AccentOrange;
             default: return R.style.AccentPurple;
+        }
+    }
+    
+    private void setupTopBar(ThemeDao themeDao) {
+        topBar = findViewById(R.id.topBar);
+        schoolNameText = findViewById(R.id.schoolNameText);
+        
+        // Apply accent color to top bar
+        GradientDrawable topBarBg = new GradientDrawable();
+        topBarBg.setShape(GradientDrawable.RECTANGLE);
+        topBarBg.setColor(accentColor);
+        topBar.setBackground(topBarBg);
+        
+        // Set school name
+        schoolNameText.setText(themeDao.getSchoolName());
+    }
+    
+    public void updateSchoolNameInTopBar(String schoolName) {
+        if (schoolNameText != null) {
+            schoolNameText.setText(schoolName);
         }
     }
 }

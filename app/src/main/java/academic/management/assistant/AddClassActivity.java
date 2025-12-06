@@ -47,6 +47,8 @@ public class AddClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_class);
         
+        setupTopBar(themeDao);
+        
         classDao = new ClassDao(dbHelper);
         ModuleDao moduleDao = new ModuleDao(dbHelper);
         TeacherDao teacherDao = new TeacherDao(dbHelper);
@@ -145,5 +147,18 @@ public class AddClassActivity extends AppCompatActivity {
             case "#FF9800": return R.style.AccentOrange;
             default: return R.style.AccentPurple;
         }
+    }
+    
+    private void setupTopBar(ThemeDao themeDao) {
+        android.widget.LinearLayout topBar = findViewById(R.id.topBar);
+        android.widget.TextView schoolNameText = findViewById(R.id.schoolNameText);
+        
+        int accentColor = Color.parseColor(themeDao.getAccentColor());
+        GradientDrawable topBarBg = new GradientDrawable();
+        topBarBg.setShape(GradientDrawable.RECTANGLE);
+        topBarBg.setColor(accentColor);
+        topBar.setBackground(topBarBg);
+        
+        schoolNameText.setText(themeDao.getSchoolName());
     }
 }
