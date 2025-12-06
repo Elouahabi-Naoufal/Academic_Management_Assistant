@@ -16,6 +16,7 @@ public class SettingsFragment extends Fragment {
     
     private ThemeDao themeDao;
     private SwitchMaterial darkModeSwitch;
+    private SwitchMaterial systemThemeSwitch;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,10 +25,25 @@ public class SettingsFragment extends Fragment {
         DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
         themeDao = new ThemeDao(dbHelper);
         
+        systemThemeSwitch = view.findViewById(R.id.systemThemeSwitch);
         darkModeSwitch = view.findViewById(R.id.darkModeSwitch);
+        
+        systemThemeSwitch.setChecked(themeDao.useSystemTheme());
         darkModeSwitch.setChecked(themeDao.isDarkTheme());
+        darkModeSwitch.setEnabled(!themeDao.useSystemTheme());
+        
+        systemThemeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            darkModeSwitch.setEnabled(!isChecked);
+            themeDao.saveTheme(themeDao.isDarkTheme(), themeDao.getAccentColor(), isChecked);
+            getActivity().recreate();
+        });
+        
         darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            themeDao.saveTheme(isChecked, themeDao.getAccentColor());
+            if (themeDao.useSystemTheme()) {
+                android.widget.Toast.makeText(getActivity(), "Please disable system theme first", android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            themeDao.saveTheme(isChecked, themeDao.getAccentColor(), false);
             getActivity().recreate();
         });
         

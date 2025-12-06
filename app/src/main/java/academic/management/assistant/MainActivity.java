@@ -23,10 +23,15 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         ThemeDao themeDao = new ThemeDao(dbHelper);
         
-        // Force theme mode to override system settings
-        int nightMode = themeDao.isDarkTheme() ? 
-            AppCompatDelegate.MODE_NIGHT_YES : 
-            AppCompatDelegate.MODE_NIGHT_NO;
+        // Apply theme mode
+        int nightMode;
+        if (themeDao.useSystemTheme()) {
+            nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        } else {
+            nightMode = themeDao.isDarkTheme() ? 
+                AppCompatDelegate.MODE_NIGHT_YES : 
+                AppCompatDelegate.MODE_NIGHT_NO;
+        }
         getDelegate().setLocalNightMode(nightMode);
         
         super.onCreate(savedInstanceState);

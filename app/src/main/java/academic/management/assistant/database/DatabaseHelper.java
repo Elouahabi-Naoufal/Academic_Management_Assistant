@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
     
     private static final String DATABASE_NAME = "academic_management.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,15 +40,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE theme (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "is_dark INTEGER DEFAULT 0, " +
-                "accent_color VARCHAR(7) DEFAULT '#6200EE')");
+                "accent_color VARCHAR(7) DEFAULT '#6200EE', " +
+                "use_system_theme INTEGER DEFAULT 0)");
     }
     
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS class");
-        db.execSQL("DROP TABLE IF EXISTS teacher");
-        db.execSQL("DROP TABLE IF EXISTS module");
-        db.execSQL("DROP TABLE IF EXISTS theme");
-        onCreate(db);
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE theme ADD COLUMN use_system_theme INTEGER DEFAULT 0");
+        }
     }
 }

@@ -34,6 +34,17 @@ public class DashboardFragment extends Fragment {
         classDao = new ClassDao(dbHelper);
         ThemeDao themeDao = new ThemeDao(dbHelper);
         
+        // Apply theme
+        int nightMode;
+        if (themeDao.useSystemTheme()) {
+            nightMode = androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        } else {
+            nightMode = themeDao.isDarkTheme() ? 
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES : 
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+        }
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(nightMode);
+        
         nextClassName = view.findViewById(R.id.nextClassName);
         countdown = view.findViewById(R.id.countdown);
         nextClassDetails = view.findViewById(R.id.nextClassDetails);
