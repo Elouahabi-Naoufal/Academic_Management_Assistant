@@ -71,7 +71,10 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.ViewHold
                 TextView classView = new TextView(holder.itemView.getContext());
                 classView.setText("• " + classItem.title);
                 classView.setTextSize(16);
-                classView.setTextColor(Color.parseColor("#64748B"));
+                android.util.TypedValue typedValue = new android.util.TypedValue();
+                holder.itemView.getContext().getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true);
+                classView.setTextColor(typedValue.data);
+                classView.setAlpha(0.7f);
                 classView.setPadding(0, 4, 0, 4);
                 holder.classesContainer.addView(classView);
             }
