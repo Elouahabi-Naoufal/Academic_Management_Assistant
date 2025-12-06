@@ -150,15 +150,29 @@ public class AddClassActivity extends AppCompatActivity {
     }
     
     private void setupTopBar(ThemeDao themeDao) {
-        android.widget.LinearLayout topBar = findViewById(R.id.topBar);
+        android.widget.LinearLayout topBar = findViewById(R.id.topBarInner);
         android.widget.TextView schoolNameText = findViewById(R.id.schoolNameText);
         
         int accentColor = Color.parseColor(themeDao.getAccentColor());
-        GradientDrawable topBarBg = new GradientDrawable();
-        topBarBg.setShape(GradientDrawable.RECTANGLE);
-        topBarBg.setColor(accentColor);
-        topBar.setBackground(topBarBg);
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            new int[]{accentColor, adjustColor(accentColor, 0.8f)}
+        );
+        gradient.setCornerRadius(24 * getResources().getDisplayMetrics().density);
+        topBar.setBackground(gradient);
+        
+        // Apply Material 3 floating style
+        topBar.setElevation(12f);
+        topBar.setClipToOutline(true);
         
         schoolNameText.setText(themeDao.getSchoolName());
+    }
+    
+    private int adjustColor(int color, float factor) {
+        int a = Color.alpha(color);
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.argb(a, Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
     }
 }

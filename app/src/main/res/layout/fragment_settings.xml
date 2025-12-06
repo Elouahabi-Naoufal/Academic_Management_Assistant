@@ -15,10 +15,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="⚙️ Settings"
-            android:textSize="32sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnBackground"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

@@ -156,17 +156,31 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void setupTopBar(ThemeDao themeDao) {
-        topBar = findViewById(R.id.topBar);
+        LinearLayout topBarInner = findViewById(R.id.topBarInner);
         schoolNameText = findViewById(R.id.schoolNameText);
         
-        // Apply accent color to top bar
-        GradientDrawable topBarBg = new GradientDrawable();
-        topBarBg.setShape(GradientDrawable.RECTANGLE);
-        topBarBg.setColor(accentColor);
-        topBar.setBackground(topBarBg);
+        // Apply modern floating style with gradient
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            new int[]{accentColor, adjustColor(accentColor, 0.8f)}
+        );
+        gradient.setCornerRadius(24 * getResources().getDisplayMetrics().density);
+        topBarInner.setBackground(gradient);
+        
+        // Apply Material 3 floating style
+        topBarInner.setElevation(12f);
+        topBarInner.setClipToOutline(true);
         
         // Set school name
         schoolNameText.setText(themeDao.getSchoolName());
+    }
+    
+    private int adjustColor(int color, float factor) {
+        int a = Color.alpha(color);
+        int r = Math.round(Color.red(color) * factor);
+        int g = Math.round(Color.green(color) * factor);
+        int b = Math.round(Color.blue(color) * factor);
+        return Color.argb(a, Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
     }
     
     public void updateSchoolNameInTopBar(String schoolName) {
