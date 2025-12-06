@@ -164,15 +164,20 @@ public class MainActivity extends AppCompatActivity {
             GradientDrawable.Orientation.LEFT_RIGHT,
             new int[]{accentColor, adjustColor(accentColor, 0.8f)}
         );
-        gradient.setCornerRadius(24 * getResources().getDisplayMetrics().density);
+        gradient.setCornerRadius(20 * getResources().getDisplayMetrics().density);
         topBarInner.setBackground(gradient);
         
         // Apply Material 3 floating style
         topBarInner.setElevation(12f);
         topBarInner.setClipToOutline(true);
         
-        // Set school name
+        // Set school name and academic year
         schoolNameText.setText(themeDao.getSchoolName());
+        
+        android.widget.TextView academicYearText = findViewById(R.id.academicYearText);
+        if (academicYearText != null) {
+            academicYearText.setText(themeDao.getAcademicYear());
+        }
     }
     
     private int adjustColor(int color, float factor) {
@@ -183,9 +188,17 @@ public class MainActivity extends AppCompatActivity {
         return Color.argb(a, Math.min(r, 255), Math.min(g, 255), Math.min(b, 255));
     }
     
-    public void updateSchoolNameInTopBar(String schoolName) {
+    public void updateTopBarDisplay() {
         if (schoolNameText != null) {
-            schoolNameText.setText(schoolName);
+            DatabaseHelper dbHelper = new DatabaseHelper(this);
+            ThemeDao themeDao = new ThemeDao(dbHelper);
+            
+            schoolNameText.setText(themeDao.getSchoolName());
+            
+            android.widget.TextView academicYearText = findViewById(R.id.academicYearText);
+            if (academicYearText != null) {
+                academicYearText.setText(themeDao.getAcademicYear());
+            }
         }
     }
 }

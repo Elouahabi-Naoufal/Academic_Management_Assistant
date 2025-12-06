@@ -22,6 +22,8 @@ public class SettingsFragment extends Fragment {
     private SwitchMaterial systemThemeSwitch;
     private TextInputEditText schoolNameEdit;
     private Button saveSchoolNameBtn;
+    private TextInputEditText academicYearEdit;
+    private Button saveAcademicYearBtn;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,9 +74,34 @@ public class SettingsFragment extends Fragment {
                 android.widget.Toast.makeText(getActivity(), "School name saved", android.widget.Toast.LENGTH_SHORT).show();
                 
                 // Update top bar immediately
-                updateTopBarInMainActivity(schoolName);
+                updateTopBarInMainActivity();
             } else {
                 android.widget.Toast.makeText(getActivity(), "Please enter a school name", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
+        
+        academicYearEdit = view.findViewById(R.id.academicYearEdit);
+        saveAcademicYearBtn = view.findViewById(R.id.saveAcademicYearBtn);
+        
+        academicYearEdit.setText(themeDao.getAcademicYear());
+        
+        // Style academic year save button
+        GradientDrawable saveAcademicYearBg = new GradientDrawable();
+        saveAcademicYearBg.setShape(GradientDrawable.RECTANGLE);
+        saveAcademicYearBg.setColor(accentColor);
+        saveAcademicYearBg.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+        saveAcademicYearBtn.setBackground(saveAcademicYearBg);
+        
+        saveAcademicYearBtn.setOnClickListener(v -> {
+            String academicYear = academicYearEdit.getText().toString().trim();
+            if (!academicYear.isEmpty()) {
+                themeDao.saveAcademicYear(academicYear);
+                android.widget.Toast.makeText(getActivity(), "Year level saved", android.widget.Toast.LENGTH_SHORT).show();
+                
+                // Update top bar immediately
+                updateTopBarInMainActivity();
+            } else {
+                android.widget.Toast.makeText(getActivity(), "Please enter a year level", android.widget.Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -100,9 +127,9 @@ public class SettingsFragment extends Fragment {
         getActivity().recreate();
     }
     
-    private void updateTopBarInMainActivity(String schoolName) {
+    private void updateTopBarInMainActivity() {
         if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).updateSchoolNameInTopBar(schoolName);
+            ((MainActivity) getActivity()).updateTopBarDisplay();
         }
     }
 }

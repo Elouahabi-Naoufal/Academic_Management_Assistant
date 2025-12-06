@@ -158,7 +158,7 @@ public class AddClassActivity extends AppCompatActivity {
             GradientDrawable.Orientation.LEFT_RIGHT,
             new int[]{accentColor, adjustColor(accentColor, 0.8f)}
         );
-        gradient.setCornerRadius(24 * getResources().getDisplayMetrics().density);
+        gradient.setCornerRadius(20 * getResources().getDisplayMetrics().density);
         topBar.setBackground(gradient);
         
         // Apply Material 3 floating style
@@ -166,6 +166,11 @@ public class AddClassActivity extends AppCompatActivity {
         topBar.setClipToOutline(true);
         
         schoolNameText.setText(themeDao.getSchoolName());
+        
+        android.widget.TextView academicYearText = findViewById(R.id.academicYearText);
+        if (academicYearText != null) {
+            academicYearText.setText(themeDao.getAcademicYear());
+        }
     }
     
     private int adjustColor(int color, float factor) {

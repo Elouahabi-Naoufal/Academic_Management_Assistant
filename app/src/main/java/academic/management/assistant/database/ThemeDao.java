@@ -77,4 +77,22 @@ public class ThemeDao {
     public void saveSchoolName(String schoolName) {
         saveTheme(isDarkTheme(), getAccentColor(), useSystemTheme(), schoolName);
     }
+    
+    public String getAcademicYear() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT academic_year FROM theme LIMIT 1", null);
+        String academicYear = "1st Year";
+        if (cursor.moveToFirst()) {
+            academicYear = cursor.getString(0);
+        }
+        cursor.close();
+        return academicYear;
+    }
+    
+    public void saveAcademicYear(String academicYear) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("academic_year", academicYear);
+        db.update("theme", values, null, null);
+    }
 }
