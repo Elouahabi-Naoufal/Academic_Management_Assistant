@@ -13,11 +13,16 @@ import academic.management.assistant.R;
 import academic.management.assistant.model.ClassItem;
 import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.ThemeDao;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> {
     
     private List<ClassItem> classes;
     private OnClassClickListener listener;
+    private boolean selectionMode = false;
+    private Set<Integer> selectedItems = new HashSet<>();
     
     public interface OnClassClickListener {
         void onClassClick(ClassItem classItem);
@@ -58,11 +63,25 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
         shineGradient.setCornerRadius(20f);
         holder.accentLine.setBackground(shineGradient);
         
-        holder.itemView.setOnClickListener(v -> listener.onClassClick(item));
+        holder.itemView.setOnClickListener(v -> {
+            if (selectionMode) {
+                toggleSelection(position);
+            } else {
+                listener.onClassClick(item);
+            }
+        });
         holder.itemView.setOnLongClickListener(v -> {
-            listener.onClassLongClick(item);
+            if (!selectionMode) {
+                listener.onClassLongClick(item);
+            }
             return true;
         });
+        
+        // Show/hide checkbox based on selection mode
+        if (holder.checkbox != null) {
+            holder.checkbox.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
+            holder.checkbox.setChecked(selectedItems.contains(position));
+        }
     }
     
     @Override
@@ -77,9 +96,51 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
         return Color.rgb(red, green, blue);
     }
     
+    public void setSelectionMode(boolean enabled) {
+        selectionMode = enabled;
+        if (!enabled) {
+            selectedItems.clear();
+        }
+        notifyDataSetChanged();
+    }
+    
+    public void toggleSelection(int position) {
+        if (selectedItems.contains(position)) {
+            selectedItems.remove(position);
+        } else {
+            selectedItems.add(position);
+        }
+        notifyItemChanged(position);
+    }
+    
+    public List<ClassItem> getSelectedClasses() {
+        List<ClassItem> selected = new ArrayList<>();
+        for (int position : selectedItems) {
+            selected.add(classes.get(position));
+        }
+        return selected;
+    }
+    
+    public int getSelectedCount() {
+        return selectedItems.size();
+    }
+    
+    public boolean isSelectionMode() {
+        return selectionMode;
+    }
+    
+    public void selectAll() {
+        selectedItems.clear();
+        for (int i = 0; i < classes.size(); i++) {
+            selectedItems.add(i);
+        }
+        notifyDataSetChanged();
+    }
+    
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView classTitle, moduleName, teacherName, classTime, classLocation;
         View accentLine;
+        android.widget.CheckBox checkbox;
         
         ViewHolder(View view) {
             super(view);
@@ -89,6 +150,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ViewHolder> 
             classTime = view.findViewById(R.id.classTime);
             classLocation = view.findViewById(R.id.classLocation);
             accentLine = view.findViewById(R.id.accentLine);
+            checkbox = view.findViewById(R.id.selectionCheckbox);
         }
     }
 }

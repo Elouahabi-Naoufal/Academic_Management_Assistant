@@ -44,8 +44,8 @@ public class YearDetailsActivity extends AppCompatActivity implements ClassAdapt
         AcademicYear year = yearDao.getYearById(yearId);
         if (year != null) {
             yearNameText.setText(year.yearName);
-            statsText.setText(String.format("Classes: %d • Grades: %d • Assignments: %d", 
-                year.totalClasses, year.totalGrades, year.totalAssignments));
+            statsText.setText(String.format("Classes: %d • Modules: %d", 
+                year.totalClasses, year.totalModules));
             
             // Load classes for this year
             List<ClassItem> classes = getClassesByYear(yearId);
@@ -56,7 +56,7 @@ public class YearDetailsActivity extends AppCompatActivity implements ClassAdapt
     }
     
     private List<ClassItem> getClassesByYear(int yearId) {
-        return classDao.getClassesByYear(yearId);
+        return new java.util.ArrayList<>();
     }
     
     @Override

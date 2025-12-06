@@ -109,8 +109,10 @@ public class ThemeDao {
     
     public void saveCurrentAcademicYearName(String yearName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("current_academic_year", yearName);
-        db.update("theme", values, null, null);
+        
+        // Update theme table only
+        ContentValues themeValues = new ContentValues();
+        themeValues.put("current_academic_year", yearName);
+        db.update("theme", themeValues, null, null);
     }
 }

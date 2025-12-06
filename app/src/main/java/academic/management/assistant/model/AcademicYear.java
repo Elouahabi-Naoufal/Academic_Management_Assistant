@@ -10,6 +10,8 @@ public class AcademicYear {
     public boolean isCurrent;
     public Date createdAt;
     public int totalClasses;
-    public int totalGrades;
-    public int totalAssignments;
+    public int totalModules;
+    public String schoolName;
+    public String yearLevel;
+    public String academicYearName;
 }

@@ -44,6 +44,10 @@ public class ClassesFragment extends Fragment {
             startActivity(intent);
         });
         
+        view.findViewById(R.id.selectBtn).setOnClickListener(v -> toggleSelectionMode());
+        view.findViewById(R.id.selectAllBtn).setOnClickListener(v -> selectAll());
+        view.findViewById(R.id.deleteSelectedBtn).setOnClickListener(v -> deleteSelected());
+        
         loadClasses();
         
         return view;
@@ -65,6 +69,45 @@ public class ClassesFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
+    }
+    
+    private void toggleSelectionMode() {
+        boolean newMode = !adapter.isSelectionMode();
+        adapter.setSelectionMode(newMode);
+        
+        android.widget.Button selectBtn = getView().findViewById(R.id.selectBtn);
+        android.widget.Button selectAllBtn = getView().findViewById(R.id.selectAllBtn);
+        android.widget.Button deleteBtn = getView().findViewById(R.id.deleteSelectedBtn);
+        
+        selectBtn.setText(newMode ? "Cancel" : "Select");
+        selectAllBtn.setVisibility(newMode ? View.VISIBLE : View.GONE);
+        deleteBtn.setVisibility(newMode ? View.VISIBLE : View.GONE);
+    }
+    
+    private void selectAll() {
+        adapter.selectAll();
+    }
+    
+    private void deleteSelected() {
+        List<ClassItem> selected = adapter.getSelectedClasses();
+        if (selected.isEmpty()) {
+            android.widget.Toast.makeText(getActivity(), "No classes selected. Tap classes to select them, or tap 'All' to select all classes.", android.widget.Toast.LENGTH_LONG).show();
+            return;
+        }
+        
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Delete Classes")
+                .setMessage("Delete " + selected.size() + " selected classes? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    for (ClassItem item : selected) {
+                        classDao.deleteClass(item.id);
+                    }
+                    android.widget.Toast.makeText(getActivity(), selected.size() + " classes deleted", android.widget.Toast.LENGTH_SHORT).show();
+                    loadClasses();
+                    toggleSelectionMode();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
     
     private void showDeleteDialog(ClassItem classItem) {

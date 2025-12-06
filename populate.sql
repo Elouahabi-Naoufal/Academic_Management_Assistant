@@ -1,0 +1,46 @@
+DELETE FROM class;
+DELETE FROM module;
+DELETE FROM teacher;
+
+INSERT INTO module (name) VALUES ('Advanced English 1');
+INSERT INTO module (name) VALUES ('Machine Learning');
+INSERT INTO module (name) VALUES ('Administration UNIX');
+INSERT INTO module (name) VALUES ('Analyse des données');
+INSERT INTO module (name) VALUES ('Recherche opérationnelle');
+INSERT INTO module (name) VALUES ('NoSQL');
+INSERT INTO module (name) VALUES ('Introduction et éthique de l''IA');
+INSERT INTO module (name) VALUES ('Dev mobile');
+INSERT INTO module (name) VALUES ('Virtualisation');
+INSERT INTO module (name) VALUES ('DOTNET');
+INSERT INTO module (name) VALUES ('Communication professionnelle 3');
+INSERT INTO module (name) VALUES ('Programmation Avancée');
+INSERT INTO module (name) VALUES ('Administration oracle 1');
+
+INSERT INTO teacher (full_name) VALUES ('Bilal ED-DERAOUAY');
+INSERT INTO teacher (full_name) VALUES ('Redouane EDDAHBI');
+INSERT INTO teacher (full_name) VALUES ('CHAHBOUN Asaad');
+INSERT INTO teacher (full_name) VALUES ('Abdelhak TALI');
+INSERT INTO teacher (full_name) VALUES ('Ilias AARAB');
+INSERT INTO teacher (full_name) VALUES ('Houda ZAIM');
+INSERT INTO teacher (full_name) VALUES ('Sara IBN EL AHRACHE');
+INSERT INTO teacher (full_name) VALUES ('Zakia EL UAHHABI');
+INSERT INTO teacher (full_name) VALUES ('Zakariae TBATOU');
+INSERT INTO teacher (full_name) VALUES ('Abderrahman EZZAMRI');
+INSERT INTO teacher (full_name) VALUES ('Chaimae KHALLOUQ');
+INSERT INTO teacher (full_name) VALUES ('Houssam BAZZA');
+INSERT INTO teacher (full_name) VALUES ('Hassan BADIR');
+
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Advanced English 1', 1, 1, 'SC-74', 2, '08:30', '10:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Machine Learning', 2, 2, 'SC-74', 2, '10:15', '11:45');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Administration UNIX', 3, 3, 'SC-34', 3, '08:30', '10:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Analyse des données', 4, 4, 'SC-74', 3, '10:45', '12:15');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Recherche opérationnelle', 5, 5, 'SC-31', 3, '14:30', '16:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('NoSQL', 6, 6, 'SC-31', 3, '16:15', '17:45');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Introduction et éthique de l''IA', 7, 7, 'SC-64', 4, '09:00', '10:30');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Dev mobile', 8, 8, 'SC-52', 4, '10:45', '12:15');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Virtualisation', 9, 9, 'SC-53', 4, '12:30', '14:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('DOTNET', 10, 10, 'SC-22', 5, '12:00', '14:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Communication professionnelle 3', 11, 11, 'SC-62', 5, '14:30', '16:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Programmation Avancée', 12, 12, 'SC-34', 6, '14:30', '16:00');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Programmation Avancée', 12, 12, 'SC-34', 6, '16:15', '18:15');
+INSERT INTO class (title, module_id, teacher_id, location, weekday, start_time, end_time) VALUES ('Administration oracle 1', 13, 13, 'SC-71', 7, '08:30', '10:30');

@@ -135,7 +135,7 @@ public class EditClassActivity extends AppCompatActivity {
         // Calendar to spinner: Sunday=1->6, Monday=2->0, Tuesday=3->1, etc.
         int spinnerPos = classItem.weekday == 1 ? 6 : classItem.weekday - 2;
         weekdaySpinner.setSelection(spinnerPos);
-        archivedCheckbox.setChecked(classItem.isArchived);
+
     }
     
     private void saveClass() {
@@ -161,7 +161,7 @@ public class EditClassActivity extends AppCompatActivity {
         }
         classItem.startTime = startTime;
         classItem.endTime = endTime;
-        classItem.isArchived = archivedCheckbox.isChecked();
+
         
         classDao.updateClass(classItem);
         Toast.makeText(this, "Class updated!", Toast.LENGTH_SHORT).show();

@@ -17,7 +17,7 @@ public class ModuleDao {
     public List<Module> getAllModules() {
         List<Module> modules = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id, name FROM module", null);
+        Cursor cursor = db.rawQuery("SELECT id, name FROM module ORDER BY name", null);
         
         while (cursor.moveToNext()) {
             Module module = new Module();

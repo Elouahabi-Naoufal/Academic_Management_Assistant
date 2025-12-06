@@ -23,6 +23,8 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.ViewHold
     
     private List<Teacher> teachers;
     private OnTeacherClickListener listener;
+    public boolean selectionMode = false;
+    private java.util.Set<Integer> selectedItems = new java.util.HashSet<>();
     
     public interface OnTeacherClickListener {
         void onTeacherClick(Teacher teacher);
@@ -82,7 +84,18 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.ViewHold
             holder.classesContainer.setVisibility(View.GONE);
         }
         
-        holder.itemView.setOnClickListener(v -> listener.onTeacherClick(teacher));
+        holder.itemView.setOnClickListener(v -> {
+            if (selectionMode) {
+                toggleSelection(position);
+            } else {
+                listener.onTeacherClick(teacher);
+            }
+        });
+        
+        if (holder.checkbox != null) {
+            holder.checkbox.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
+            holder.checkbox.setChecked(selectedItems.contains(position));
+        }
     }
     
     @Override
@@ -90,16 +103,51 @@ public class TeacherAdapter extends RecyclerView.Adapter<TeacherAdapter.ViewHold
         return teachers.size();
     }
     
+    public void setSelectionMode(boolean enabled) {
+        selectionMode = enabled;
+        if (!enabled) {
+            selectedItems.clear();
+        }
+        notifyDataSetChanged();
+    }
+    
+    public void toggleSelection(int position) {
+        if (selectedItems.contains(position)) {
+            selectedItems.remove(position);
+        } else {
+            selectedItems.add(position);
+        }
+        notifyItemChanged(position);
+    }
+    
+    public java.util.List<Teacher> getSelectedTeachers() {
+        java.util.List<Teacher> selected = new java.util.ArrayList<>();
+        for (int position : selectedItems) {
+            selected.add(teachers.get(position));
+        }
+        return selected;
+    }
+    
+    public void selectAll() {
+        selectedItems.clear();
+        for (int i = 0; i < teachers.size(); i++) {
+            selectedItems.add(i);
+        }
+        notifyDataSetChanged();
+    }
+    
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView teacherName;
         ImageView teacherPhoto;
         LinearLayout classesContainer;
+        android.widget.CheckBox checkbox;
         
         ViewHolder(View view) {
             super(view);
             teacherName = view.findViewById(R.id.teacherName);
             teacherPhoto = view.findViewById(R.id.teacherPhoto);
             classesContainer = view.findViewById(R.id.classesContainer);
+            checkbox = view.findViewById(R.id.selectionCheckbox);
         }
     }
 }

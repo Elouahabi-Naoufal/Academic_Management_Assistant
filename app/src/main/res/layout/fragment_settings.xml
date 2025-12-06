@@ -168,41 +168,24 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📅 Academic Year Management"
+                    android:text="📦 Archive Management"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="16dp" />
 
                 <Button
-                    android:id="@+id/manageYearsBtn"
+                    android:id="@+id/viewArchivesBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="View All Academic Years"
+                    android:text="View Archive Sessions"
                     android:layout_marginBottom="8dp" />
 
-                <LinearLayout
+                <Button
+                    android:id="@+id/archiveClassesBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/newYearBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="New Year"
-                        android:layout_marginEnd="8dp" />
-
-                    <Button
-                        android:id="@+id/archiveYearBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Archive Current"
-                        android:layout_marginStart="8dp" />
-
-                </LinearLayout>
+                    android:text="Archive Selected Classes" />
 
             </LinearLayout>
 

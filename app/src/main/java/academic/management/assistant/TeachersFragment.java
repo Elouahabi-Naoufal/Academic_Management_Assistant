@@ -42,6 +42,10 @@ public class TeachersFragment extends Fragment {
         ));
         fab.setOnClickListener(v -> showAddDialog());
         
+        view.findViewById(R.id.selectBtn).setOnClickListener(v -> toggleSelectionMode());
+        view.findViewById(R.id.selectAllBtn).setOnClickListener(v -> selectAll());
+        view.findViewById(R.id.deleteSelectedBtn).setOnClickListener(v -> deleteSelected());
+        
         loadTeachers();
         
         return view;
@@ -62,6 +66,45 @@ public class TeachersFragment extends Fragment {
         android.content.Intent intent = new android.content.Intent(getActivity(), EditTeacherActivity.class);
         intent.putExtra("TEACHER_ID", teacher.id);
         startActivity(intent);
+    }
+    
+    private void toggleSelectionMode() {
+        boolean newMode = !adapter.selectionMode;
+        adapter.setSelectionMode(newMode);
+        
+        android.widget.Button selectBtn = getView().findViewById(R.id.selectBtn);
+        android.widget.Button selectAllBtn = getView().findViewById(R.id.selectAllBtn);
+        android.widget.Button deleteBtn = getView().findViewById(R.id.deleteSelectedBtn);
+        
+        selectBtn.setText(newMode ? "Cancel" : "Select");
+        selectAllBtn.setVisibility(newMode ? View.VISIBLE : View.GONE);
+        deleteBtn.setVisibility(newMode ? View.VISIBLE : View.GONE);
+    }
+    
+    private void selectAll() {
+        adapter.selectAll();
+    }
+    
+    private void deleteSelected() {
+        List<Teacher> selected = adapter.getSelectedTeachers();
+        if (selected.isEmpty()) {
+            Toast.makeText(getActivity(), "No teachers selected. Tap teachers to select them, or tap 'All' to select all teachers.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Delete Teachers")
+                .setMessage("Delete " + selected.size() + " selected teachers? This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    for (Teacher item : selected) {
+                        teacherDao.deleteTeacher(item.id);
+                    }
+                    Toast.makeText(getActivity(), selected.size() + " teachers deleted", Toast.LENGTH_SHORT).show();
+                    loadTeachers();
+                    toggleSelectionMode();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
     
     @Override

@@ -30,6 +30,16 @@ public class YearManagementActivity extends AppCompatActivity {
         loadYears();
     }
     
+    private void showYearOptionsDialog(AcademicYear year) {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(year.yearName + " Options")
+                .setMessage("Choose an action:")
+                .setPositiveButton("Restore Data", (dialog, which) -> showRestoreDialog(year))
+                .setNeutralButton("Delete Year", (dialog, which) -> showDeleteDialog(year))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    
     private void showRestoreDialog(AcademicYear year) {
         new android.app.AlertDialog.Builder(this)
                 .setTitle("Restore from " + year.yearName)
@@ -48,16 +58,35 @@ public class YearManagementActivity extends AppCompatActivity {
                 .show();
     }
     
+    private void showDeleteDialog(AcademicYear year) {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Delete " + year.yearName)
+                .setMessage("This will permanently delete all data for this year. This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    yearDao.deleteYear(year.id);
+                    android.widget.Toast.makeText(this, year.yearName + " deleted", android.widget.Toast.LENGTH_SHORT).show();
+                    loadYears();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+    
     private void loadYears() {
         List<AcademicYear> years = yearDao.getAllYears();
         YearAdapter adapter = new YearAdapter(years, year -> {
-            Intent intent = new Intent(this, YearDetailsActivity.class);
-            intent.putExtra("year_id", year.id);
-            startActivity(intent);
+            if (year.isCurrent) {
+                Intent intent = new Intent(this, YearDetailsActivity.class);
+                intent.putExtra("year_id", year.id);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, ArchivedYearActivity.class);
+                intent.putExtra("year_id", year.id);
+                intent.putExtra("year_name", year.yearName);
+                startActivity(intent);
+            }
         }, year -> {
-            // Long click for restore options
             if (!year.isCurrent) {
-                showRestoreDialog(year);
+                showYearOptionsDialog(year);
             }
         });
         yearsRecycler.setLayoutManager(new LinearLayoutManager(this));

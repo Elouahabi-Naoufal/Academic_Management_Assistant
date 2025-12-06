@@ -19,6 +19,8 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
     
     private List<Module> modules;
     private OnModuleClickListener listener;
+    public boolean selectionMode = false;
+    private java.util.Set<Integer> selectedItems = new java.util.HashSet<>();
     
     public interface OnModuleClickListener {
         void onModuleClick(Module module);
@@ -65,7 +67,18 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
             holder.classesContainer.setVisibility(View.GONE);
         }
         
-        holder.itemView.setOnClickListener(v -> listener.onModuleClick(module));
+        holder.itemView.setOnClickListener(v -> {
+            if (selectionMode) {
+                toggleSelection(position);
+            } else {
+                listener.onModuleClick(module);
+            }
+        });
+        
+        if (holder.checkbox != null) {
+            holder.checkbox.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
+            holder.checkbox.setChecked(selectedItems.contains(position));
+        }
     }
     
     @Override
@@ -73,14 +86,49 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
         return modules.size();
     }
     
+    public void setSelectionMode(boolean enabled) {
+        selectionMode = enabled;
+        if (!enabled) {
+            selectedItems.clear();
+        }
+        notifyDataSetChanged();
+    }
+    
+    public void toggleSelection(int position) {
+        if (selectedItems.contains(position)) {
+            selectedItems.remove(position);
+        } else {
+            selectedItems.add(position);
+        }
+        notifyItemChanged(position);
+    }
+    
+    public java.util.List<Module> getSelectedModules() {
+        java.util.List<Module> selected = new java.util.ArrayList<>();
+        for (int position : selectedItems) {
+            selected.add(modules.get(position));
+        }
+        return selected;
+    }
+    
+    public void selectAll() {
+        selectedItems.clear();
+        for (int i = 0; i < modules.size(); i++) {
+            selectedItems.add(i);
+        }
+        notifyDataSetChanged();
+    }
+    
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView moduleName;
         LinearLayout classesContainer;
+        android.widget.CheckBox checkbox;
         
         ViewHolder(View view) {
             super(view);
             moduleName = view.findViewById(R.id.moduleName);
             classesContainer = view.findViewById(R.id.classesContainer);
+            checkbox = view.findViewById(R.id.selectionCheckbox);
         }
     }
 }

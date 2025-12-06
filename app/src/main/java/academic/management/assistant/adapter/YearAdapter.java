@@ -38,8 +38,16 @@ public class YearAdapter extends RecyclerView.Adapter<YearAdapter.YearViewHolder
     public void onBindViewHolder(YearViewHolder holder, int position) {
         AcademicYear year = years.get(position);
         holder.yearNameText.setText(year.yearName);
-        holder.statsText.setText(String.format("Classes: %d • Grades: %d • Assignments: %d", 
-            year.totalClasses, year.totalGrades, year.totalAssignments));
+        holder.statsText.setText(String.format("Classes: %d • Modules: %d", 
+            year.totalClasses, year.totalModules));
+        
+        if (year.schoolName != null) {
+            holder.schoolInfoText.setText(String.format("%s • %s • %s", 
+                year.schoolName, year.yearLevel, year.academicYearName));
+            holder.schoolInfoText.setVisibility(View.VISIBLE);
+        } else {
+            holder.schoolInfoText.setVisibility(View.GONE);
+        }
         holder.statusText.setText(year.isCurrent ? "CURRENT" : "ARCHIVED");
         
         holder.itemView.setOnClickListener(v -> listener.onYearClick(year));
@@ -57,13 +65,14 @@ public class YearAdapter extends RecyclerView.Adapter<YearAdapter.YearViewHolder
     }
     
     static class YearViewHolder extends RecyclerView.ViewHolder {
-        TextView yearNameText, statsText, statusText;
+        TextView yearNameText, statsText, statusText, schoolInfoText;
         
         YearViewHolder(View itemView) {
             super(itemView);
             yearNameText = itemView.findViewById(R.id.yearNameText);
             statsText = itemView.findViewById(R.id.statsText);
             statusText = itemView.findViewById(R.id.statusText);
+            schoolInfoText = itemView.findViewById(R.id.schoolInfoText);
         }
     }
 }

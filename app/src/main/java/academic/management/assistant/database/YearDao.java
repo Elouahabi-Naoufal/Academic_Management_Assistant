@@ -21,7 +21,7 @@ public class YearDao {
         
         String query = "SELECT y.*, " +
                       "(SELECT COUNT(*) FROM class WHERE year_id = y.id) as class_count, " +
-                      "0 as grade_count, 0 as assignment_count " +
+                      "(SELECT COUNT(DISTINCT module_id) FROM class WHERE year_id = y.id) as module_count " +
                       "FROM academic_year y ORDER BY y.is_current DESC, y.created_at DESC";
         
         Cursor cursor = db.rawQuery(query, null);
@@ -31,8 +31,12 @@ public class YearDao {
             year.yearName = cursor.getString(1);
             year.isCurrent = cursor.getInt(4) == 1;
             year.totalClasses = cursor.getInt(6);
-            year.totalGrades = cursor.getInt(7);
-            year.totalAssignments = cursor.getInt(8);
+            year.totalModules = cursor.getInt(7);
+            if (cursor.getColumnCount() > 8) {
+                year.schoolName = cursor.getString(8);
+                year.yearLevel = cursor.getString(9);
+                year.academicYearName = cursor.getString(10);
+            }
             years.add(year);
         }
         cursor.close();
@@ -52,6 +56,11 @@ public class YearDao {
         values.put("year_name", yearName);
         values.put("is_current", 1);
         db.insert("academic_year", null, values);
+        
+        // Sync with theme table
+        ContentValues themeValues = new ContentValues();
+        themeValues.put("current_academic_year", yearName);
+        db.update("theme", themeValues, null, null);
     }
     
     public void archiveCurrentYear() {
@@ -99,29 +108,36 @@ public class YearDao {
         return yearId;
     }
     
-    public void archiveSelectedData(boolean archiveClasses, boolean archiveModules, boolean archiveTeachers) {
+    public void archiveSelectedData(boolean archiveClasses, boolean archiveModules) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         
+        // Get current school info
+        academic.management.assistant.database.ThemeDao themeDao = new academic.management.assistant.database.ThemeDao(dbHelper);
+        String schoolName = themeDao.getSchoolName();
+        String yearLevel = themeDao.getAcademicYear();
+        String academicYearName = themeDao.getCurrentAcademicYearName();
+        
+        // Update current year with school info before archiving
+        ContentValues schoolInfo = new ContentValues();
+        schoolInfo.put("school_name", schoolName);
+        schoolInfo.put("year_level", yearLevel);
+        schoolInfo.put("academic_year_name", academicYearName);
+        schoolInfo.put("is_current", 0);
+        db.update("academic_year", schoolInfo, "is_current = 1", null);
+        
         if (archiveClasses) {
-            db.execSQL("UPDATE class SET is_archived = 1 WHERE year_id = (SELECT id FROM academic_year WHERE is_current = 1)");
+            db.execSQL("UPDATE class SET is_archived = 1 WHERE year_id = (SELECT id FROM academic_year WHERE school_name = ?)", new String[]{schoolName});
         }
         
         if (archiveModules) {
-            // Add archived flag to modules if needed, or create archive table
-            db.execSQL("CREATE TABLE IF NOT EXISTS archived_module AS SELECT * FROM module WHERE 0");
-            db.execSQL("INSERT INTO archived_module SELECT * FROM module");
+            db.execSQL("UPDATE module SET is_archived = 1");
         }
-        
-        if (archiveTeachers) {
-            // Add archived flag to teachers if needed, or create archive table
-            db.execSQL("CREATE TABLE IF NOT EXISTS archived_teacher AS SELECT * FROM teacher WHERE 0");
-            db.execSQL("INSERT INTO archived_teacher SELECT * FROM teacher");
-        }
-        
-        // Set current year as non-current
-        ContentValues values = new ContentValues();
-        values.put("is_current", 0);
-        db.update("academic_year", values, "is_current = 1", null);
+    }
+    
+    public void deleteYear(int yearId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("class", "year_id = ?", new String[]{String.valueOf(yearId)});
+        db.delete("academic_year", "id = ?", new String[]{String.valueOf(yearId)});
     }
     
     public AcademicYear getYearById(int yearId) {
@@ -129,7 +145,7 @@ public class YearDao {
         
         String query = "SELECT y.*, " +
                       "(SELECT COUNT(*) FROM class WHERE year_id = y.id) as class_count, " +
-                      "0 as grade_count, 0 as assignment_count " +
+                      "(SELECT COUNT(DISTINCT module_id) FROM class WHERE year_id = y.id) as module_count " +
                       "FROM academic_year y WHERE y.id = ?";
         
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(yearId)});
@@ -141,8 +157,7 @@ public class YearDao {
             year.yearName = cursor.getString(1);
             year.isCurrent = cursor.getInt(4) == 1;
             year.totalClasses = cursor.getInt(6);
-            year.totalGrades = cursor.getInt(7);
-            year.totalAssignments = cursor.getInt(8);
+            year.totalModules = cursor.getInt(7);
         }
         cursor.close();
         return year;
@@ -150,8 +165,15 @@ public class YearDao {
     
     public void updateCurrentYearName(String yearName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("year_name", yearName);
-        db.update("academic_year", values, "is_current = 1", null);
+        
+        // Update academic_year table
+        ContentValues yearValues = new ContentValues();
+        yearValues.put("year_name", yearName);
+        db.update("academic_year", yearValues, "is_current = 1", null);
+        
+        // Sync with theme table
+        ContentValues themeValues = new ContentValues();
+        themeValues.put("current_academic_year", yearName);
+        db.update("theme", themeValues, null, null);
     }
 }

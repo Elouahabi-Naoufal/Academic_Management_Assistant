@@ -8,7 +8,7 @@ import academic.management.assistant.database.DatabaseHelper;
 import academic.management.assistant.database.YearDao;
 
 public class ArchiveActivity extends AppCompatActivity {
-    private CheckBox classesCheckbox, modulesCheckbox, teachersCheckbox;
+    private CheckBox classesCheckbox, modulesCheckbox;
     private Button archiveBtn;
     private YearDao yearDao;
     
@@ -22,7 +22,6 @@ public class ArchiveActivity extends AppCompatActivity {
         
         classesCheckbox = findViewById(R.id.classesCheckbox);
         modulesCheckbox = findViewById(R.id.modulesCheckbox);
-        teachersCheckbox = findViewById(R.id.teachersCheckbox);
         archiveBtn = findViewById(R.id.archiveBtn);
         
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
@@ -32,28 +31,25 @@ public class ArchiveActivity extends AppCompatActivity {
     }
     
     private void selectAll() {
-        boolean selectAll = !classesCheckbox.isChecked() || !modulesCheckbox.isChecked() || !teachersCheckbox.isChecked();
+        boolean selectAll = !classesCheckbox.isChecked() || !modulesCheckbox.isChecked();
         classesCheckbox.setChecked(selectAll);
         modulesCheckbox.setChecked(selectAll);
-        teachersCheckbox.setChecked(selectAll);
     }
     
     private void performArchive() {
         boolean archiveClasses = classesCheckbox.isChecked();
         boolean archiveModules = modulesCheckbox.isChecked();
-        boolean archiveTeachers = teachersCheckbox.isChecked();
         
-        if (!archiveClasses && !archiveModules && !archiveTeachers) {
+        if (!archiveClasses && !archiveModules) {
             android.widget.Toast.makeText(this, "Please select at least one option", android.widget.Toast.LENGTH_SHORT).show();
             return;
         }
         
-        yearDao.archiveSelectedData(archiveClasses, archiveModules, archiveTeachers);
+        yearDao.archiveSelectedData(archiveClasses, archiveModules);
         
         String message = "Archived: ";
         if (archiveClasses) message += "Classes ";
-        if (archiveModules) message += "Modules ";
-        if (archiveTeachers) message += "Teachers";
+        if (archiveModules) message += "Modules";
         
         android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show();
         finish();

@@ -131,7 +131,7 @@ public class AddClassActivity extends AppCompatActivity {
         }
         classItem.startTime = startTime;
         classItem.endTime = endTime;
-        classItem.isArchived = false;
+
         
         classDao.insertClass(classItem);
         Toast.makeText(this, "Class added!", Toast.LENGTH_SHORT).show();

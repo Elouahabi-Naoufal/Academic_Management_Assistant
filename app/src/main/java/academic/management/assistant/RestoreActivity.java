@@ -52,7 +52,7 @@ public class RestoreActivity extends AppCompatActivity {
     }
     
     private void loadClasses() {
-        List<ClassItem> classes = classDao.getClassesByYear(sourceYearId);
+        List<ClassItem> classes = new ArrayList<>();
         adapter = new RestoreClassAdapter(classes);
         classesRecycler.setLayoutManager(new LinearLayoutManager(this));
         classesRecycler.setAdapter(adapter);
