@@ -16,18 +16,22 @@ public class ThemeDao {
     }
     
     public void saveTheme(boolean isDark, String accentColor, boolean useSystemTheme) {
-        saveTheme(isDark, accentColor, useSystemTheme, getSchoolName());
-    }
-    
-    public void saveTheme(boolean isDark, String accentColor, boolean useSystemTheme, String schoolName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("DELETE FROM theme");
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM theme", null);
+        cursor.moveToFirst();
+        boolean exists = cursor.getInt(0) > 0;
+        cursor.close();
+        
         ContentValues values = new ContentValues();
         values.put("is_dark", isDark ? 1 : 0);
         values.put("accent_color", accentColor);
         values.put("use_system_theme", useSystemTheme ? 1 : 0);
-        values.put("school_name", schoolName);
-        db.insert("theme", null, values);
+        
+        if (exists) {
+            db.update("theme", values, null, null);
+        } else {
+            db.insert("theme", null, values);
+        }
     }
     
     public boolean isDarkTheme() {
@@ -66,8 +70,8 @@ public class ThemeDao {
     public String getSchoolName() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT school_name FROM theme LIMIT 1", null);
-        String schoolName = "Academic Management";
-        if (cursor.moveToFirst()) {
+        String schoolName = "";
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
             schoolName = cursor.getString(0);
         }
         cursor.close();
@@ -75,14 +79,27 @@ public class ThemeDao {
     }
     
     public void saveSchoolName(String schoolName) {
-        saveTheme(isDarkTheme(), getAccentColor(), useSystemTheme(), schoolName);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM theme", null);
+        cursor.moveToFirst();
+        boolean exists = cursor.getInt(0) > 0;
+        cursor.close();
+        
+        ContentValues values = new ContentValues();
+        values.put("school_name", schoolName);
+        
+        if (exists) {
+            db.update("theme", values, null, null);
+        } else {
+            db.insert("theme", null, values);
+        }
     }
     
     public String getAcademicYear() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT academic_year FROM theme LIMIT 1", null);
-        String academicYear = "1st Year";
-        if (cursor.moveToFirst()) {
+        String academicYear = "";
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
             academicYear = cursor.getString(0);
         }
         cursor.close();
@@ -92,8 +109,8 @@ public class ThemeDao {
     public String getCurrentAcademicYearName() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT current_academic_year FROM theme LIMIT 1", null);
-        String yearName = "2024-2025";
-        if (cursor.moveToFirst()) {
+        String yearName = "";
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
             yearName = cursor.getString(0);
         }
         cursor.close();
@@ -102,17 +119,35 @@ public class ThemeDao {
     
     public void saveAcademicYear(String academicYear) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM theme", null);
+        cursor.moveToFirst();
+        boolean exists = cursor.getInt(0) > 0;
+        cursor.close();
+        
         ContentValues values = new ContentValues();
         values.put("academic_year", academicYear);
-        db.update("theme", values, null, null);
+        
+        if (exists) {
+            db.update("theme", values, null, null);
+        } else {
+            db.insert("theme", null, values);
+        }
     }
     
     public void saveCurrentAcademicYearName(String yearName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM theme", null);
+        cursor.moveToFirst();
+        boolean exists = cursor.getInt(0) > 0;
+        cursor.close();
         
-        // Update theme table only
-        ContentValues themeValues = new ContentValues();
-        themeValues.put("current_academic_year", yearName);
-        db.update("theme", themeValues, null, null);
+        ContentValues values = new ContentValues();
+        values.put("current_academic_year", yearName);
+        
+        if (exists) {
+            db.update("theme", values, null, null);
+        } else {
+            db.insert("theme", null, values);
+        }
     }
 }

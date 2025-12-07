@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
     
     private static final String DATABASE_NAME = "academic_management.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,9 +41,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "is_dark INTEGER DEFAULT 0, " +
                 "accent_color VARCHAR(7) DEFAULT '#6200EE', " +
                 "use_system_theme INTEGER DEFAULT 0, " +
-                "school_name VARCHAR(255) DEFAULT 'Academic Management', " +
-                "academic_year VARCHAR(50) DEFAULT '1st Year', " +
-                "current_academic_year VARCHAR(50) DEFAULT '2024-2025')");
+                "school_name VARCHAR(255), " +
+                "academic_year VARCHAR(50), " +
+                "current_academic_year VARCHAR(50))");
     }
     
     @Override
@@ -66,6 +66,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "FOREIGN KEY (teacher_id) REFERENCES teacher(id))");
             db.execSQL("INSERT INTO class SELECT * FROM class_backup");
             db.execSQL("DROP TABLE class_backup");
+        }
+        if (oldVersion < 12) {
+            db.execSQL("UPDATE theme SET school_name = NULL, academic_year = NULL, current_academic_year = NULL");
         }
     }
 }
