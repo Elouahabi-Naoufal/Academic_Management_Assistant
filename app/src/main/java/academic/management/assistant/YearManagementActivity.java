@@ -74,16 +74,9 @@ public class YearManagementActivity extends AppCompatActivity {
     private void loadYears() {
         List<AcademicYear> years = yearDao.getAllYears();
         YearAdapter adapter = new YearAdapter(years, year -> {
-            if (year.isCurrent) {
-                Intent intent = new Intent(this, YearDetailsActivity.class);
-                intent.putExtra("year_id", year.id);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(this, ArchivedYearActivity.class);
-                intent.putExtra("year_id", year.id);
-                intent.putExtra("year_name", year.yearName);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(this, YearDetailsActivity.class);
+            intent.putExtra("year_id", year.id);
+            startActivity(intent);
         }, year -> {
             if (!year.isCurrent) {
                 showYearOptionsDialog(year);

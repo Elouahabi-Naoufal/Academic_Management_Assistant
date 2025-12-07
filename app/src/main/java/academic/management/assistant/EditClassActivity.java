@@ -25,7 +25,6 @@ public class EditClassActivity extends AppCompatActivity {
     
     private EditText titleEdit, locationEdit, startTimeEdit, endTimeEdit;
     private Spinner weekdaySpinner, moduleSpinner, teacherSpinner;
-    private CheckBox archivedCheckbox;
     private ClassDao classDao;
     private ClassItem classItem;
     private List<academic.management.assistant.model.Module> modules;
@@ -65,7 +64,6 @@ public class EditClassActivity extends AppCompatActivity {
         weekdaySpinner = findViewById(R.id.weekdaySpinner);
         moduleSpinner = findViewById(R.id.moduleSpinner);
         teacherSpinner = findViewById(R.id.teacherSpinner);
-        archivedCheckbox = findViewById(R.id.archivedCheckbox);
         
         // Load modules
         modules = moduleDao.getAllModules();

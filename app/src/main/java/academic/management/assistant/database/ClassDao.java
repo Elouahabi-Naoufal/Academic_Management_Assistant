@@ -24,7 +24,6 @@ public class ClassDao {
                       "FROM class c " +
                       "LEFT JOIN module m ON c.module_id = m.id " +
                       "LEFT JOIN teacher t ON c.teacher_id = t.id " +
-                      "WHERE c.archive_session_id IS NULL " +
                       "ORDER BY c.weekday, c.start_time";
         
         Cursor cursor = db.rawQuery(query, null);
@@ -121,7 +120,7 @@ public class ClassDao {
                       "FROM class c " +
                       "LEFT JOIN module m ON c.module_id = m.id " +
                       "LEFT JOIN teacher t ON c.teacher_id = t.id " +
-                      "WHERE c.module_id = ? AND c.archive_session_id IS NULL " +
+                      "WHERE c.module_id = ? " +
                       "ORDER BY c.weekday, c.start_time";
         
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(moduleId)});
@@ -155,7 +154,7 @@ public class ClassDao {
                       "FROM class c " +
                       "LEFT JOIN module m ON c.module_id = m.id " +
                       "LEFT JOIN teacher t ON c.teacher_id = t.id " +
-                      "WHERE c.teacher_id = ? AND c.archive_session_id IS NULL " +
+                      "WHERE c.teacher_id = ? " +
                       "ORDER BY c.weekday, c.start_time";
         
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(teacherId)});

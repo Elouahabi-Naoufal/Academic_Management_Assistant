@@ -108,8 +108,7 @@ public class SettingsFragment extends Fragment {
         // Current Academic Year Name
         setupCurrentAcademicYear(view);
         
-        // Academic Year Management Section
-        setupYearManagement(view);
+
         
         setupColorButton(view.findViewById(R.id.colorPurple), "#6200EE");
         setupColorButton(view.findViewById(R.id.colorBlue), "#2196F3");
@@ -120,29 +119,7 @@ public class SettingsFragment extends Fragment {
         return view;
     }
     
-    private void setupYearManagement(View view) {
-        android.widget.Button viewArchivesBtn = view.findViewById(R.id.viewArchivesBtn);
-        android.widget.Button archiveClassesBtn = view.findViewById(R.id.archiveClassesBtn);
-        
-        viewArchivesBtn.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(getActivity(), ArchiveSessionsActivity.class);
-            startActivity(intent);
-        });
-        
-        archiveClassesBtn.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(getActivity(), SelectClassesToArchiveActivity.class);
-            startActivity(intent);
-        });
-    }
-    
 
-    
-
-    
-
-    
-
-    
     private void setupCurrentAcademicYear(View view) {
         com.google.android.material.textfield.TextInputEditText currentAcademicYearEdit = view.findViewById(R.id.currentAcademicYearEdit);
         android.widget.Button saveCurrentAcademicYearBtn = view.findViewById(R.id.saveCurrentAcademicYearBtn);

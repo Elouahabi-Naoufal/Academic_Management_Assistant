@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
     
     private static final String DATABASE_NAME = "academic_management.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -15,11 +15,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE archive_session (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "title VARCHAR(255) NOT NULL, " +
-                "created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
-        
         db.execSQL("CREATE TABLE module (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name VARCHAR(255) NOT NULL)");
@@ -38,10 +33,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "weekday INTEGER NOT NULL, " +
                 "start_time TEXT NOT NULL, " +
                 "end_time TEXT NOT NULL, " +
-                "archive_session_id INTEGER, " +
                 "FOREIGN KEY (module_id) REFERENCES module(id), " +
-                "FOREIGN KEY (teacher_id) REFERENCES teacher(id), " +
-                "FOREIGN KEY (archive_session_id) REFERENCES archive_session(id))");
+                "FOREIGN KEY (teacher_id) REFERENCES teacher(id))");
         
         db.execSQL("CREATE TABLE theme (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -55,29 +48,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 10) {
-            // Clear and recreate with new schema
-            db.execSQL("DROP TABLE IF EXISTS class");
-            db.execSQL("DROP TABLE IF EXISTS module");
-            db.execSQL("DROP TABLE IF EXISTS teacher");
+        if (oldVersion < 11) {
             db.execSQL("DROP TABLE IF EXISTS archive_session");
-            db.execSQL("DROP TABLE IF EXISTS academic_year");
-            
-            // Recreate only the tables we need (theme already exists)
-            db.execSQL("CREATE TABLE archive_session (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "title VARCHAR(255) NOT NULL, " +
-                    "created_at TEXT DEFAULT CURRENT_TIMESTAMP)");
-            
-            db.execSQL("CREATE TABLE module (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "name VARCHAR(255) NOT NULL)");
-            
-            db.execSQL("CREATE TABLE teacher (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "full_name VARCHAR(255) NOT NULL, " +
-                    "image_path VARCHAR(255))");
-            
+            db.execSQL("CREATE TEMPORARY TABLE class_backup(id, title, module_id, teacher_id, location, weekday, start_time, end_time)");
+            db.execSQL("INSERT INTO class_backup SELECT id, title, module_id, teacher_id, location, weekday, start_time, end_time FROM class");
+            db.execSQL("DROP TABLE class");
             db.execSQL("CREATE TABLE class (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "title VARCHAR(255) NOT NULL, " +
@@ -87,10 +62,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "weekday INTEGER NOT NULL, " +
                     "start_time TEXT NOT NULL, " +
                     "end_time TEXT NOT NULL, " +
-                    "archive_session_id INTEGER, " +
                     "FOREIGN KEY (module_id) REFERENCES module(id), " +
-                    "FOREIGN KEY (teacher_id) REFERENCES teacher(id), " +
-                    "FOREIGN KEY (archive_session_id) REFERENCES archive_session(id))");
+                    "FOREIGN KEY (teacher_id) REFERENCES teacher(id))");
+            db.execSQL("INSERT INTO class SELECT * FROM class_backup");
+            db.execSQL("DROP TABLE class_backup");
         }
     }
 }

@@ -108,32 +108,7 @@ public class YearDao {
         return yearId;
     }
     
-    public void archiveSelectedData(boolean archiveClasses, boolean archiveModules) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        
-        // Get current school info
-        academic.management.assistant.database.ThemeDao themeDao = new academic.management.assistant.database.ThemeDao(dbHelper);
-        String schoolName = themeDao.getSchoolName();
-        String yearLevel = themeDao.getAcademicYear();
-        String academicYearName = themeDao.getCurrentAcademicYearName();
-        
-        // Update current year with school info before archiving
-        ContentValues schoolInfo = new ContentValues();
-        schoolInfo.put("school_name", schoolName);
-        schoolInfo.put("year_level", yearLevel);
-        schoolInfo.put("academic_year_name", academicYearName);
-        schoolInfo.put("is_current", 0);
-        db.update("academic_year", schoolInfo, "is_current = 1", null);
-        
-        if (archiveClasses) {
-            db.execSQL("UPDATE class SET is_archived = 1 WHERE year_id = (SELECT id FROM academic_year WHERE school_name = ?)", new String[]{schoolName});
-        }
-        
-        if (archiveModules) {
-            db.execSQL("UPDATE module SET is_archived = 1");
-        }
-    }
-    
+
     public void deleteYear(int yearId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("class", "year_id = ?", new String[]{String.valueOf(yearId)});

@@ -55,26 +55,6 @@
         <activity
             android:name=".RestoreActivity"
             android:exported="false" />
-            
-        <activity
-            android:name=".ArchiveActivity"
-            android:exported="false" />
-            
-        <activity
-            android:name=".ArchivedYearActivity"
-            android:exported="false" />
-            
-        <activity
-            android:name=".ArchiveSessionsActivity"
-            android:exported="false" />
-            
-        <activity
-            android:name=".SelectClassesToArchiveActivity"
-            android:exported="false" />
-            
-        <activity
-            android:name=".ArchivedClassesActivity"
-            android:exported="false" />
 
     </application>
 
