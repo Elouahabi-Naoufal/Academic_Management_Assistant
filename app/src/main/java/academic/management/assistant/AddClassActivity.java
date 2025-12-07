@@ -32,14 +32,8 @@ public class AddClassActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         ThemeDao themeDao = new ThemeDao(dbHelper);
         
-        int nightMode;
-        if (themeDao.useSystemTheme()) {
-            nightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-        } else {
-            nightMode = themeDao.isDarkTheme() ? 
-                AppCompatDelegate.MODE_NIGHT_YES : 
-                AppCompatDelegate.MODE_NIGHT_NO;
-        }
+        int nightMode = themeDao.useSystemTheme() ? AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM :
+            (themeDao.isDarkTheme() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         getDelegate().setLocalNightMode(nightMode);
         
         getTheme().applyStyle(getAccentStyle(themeDao.getAccentColor()), true);

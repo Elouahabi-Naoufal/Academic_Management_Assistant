@@ -45,9 +45,8 @@ public class EditTeacherActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         ThemeDao themeDao = new ThemeDao(dbHelper);
         
-        int nightMode = themeDao.isDarkTheme() ? 
-            AppCompatDelegate.MODE_NIGHT_YES : 
-            AppCompatDelegate.MODE_NIGHT_NO;
+        int nightMode = themeDao.useSystemTheme() ? AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM :
+            (themeDao.isDarkTheme() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         getDelegate().setLocalNightMode(nightMode);
         
         getTheme().applyStyle(getAccentStyle(themeDao.getAccentColor()), true);
